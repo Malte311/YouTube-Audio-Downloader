@@ -1,0 +1,36 @@
+language: node_js
+
+node_js:
+- "11"
+
+os: osx
+
+branches:
+  only:
+  - master
+
+sudo: required
+
+env:
+  global:
+    # prevent wine popup dialogs about installing additional packages
+    - WINEDLLOVERRIDES="mscoree,mshtml="
+
+before_deploy: bash build.sh
+
+deploy:
+  - provider: pages
+    github-token: $GITHUB_TOKEN
+    local-dir: "out"
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file:
+      - "application/YouTube-Audio-Downloader-win32-x64.zip"
+      - "application/YouTube-Audio-Downloader-linux-x64.zip"
+      - "YouTube-Audio-Downloader-mac-x64.dmg"
+    skip_cleanup: true
+    on:
+      tags: true

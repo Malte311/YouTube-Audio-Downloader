@@ -1,0 +1,31 @@
+{
+  "name": "YouTube-Audio-Downloader",
+  "version": "0.0.1",
+  "description": "Download audio tracks from YouTube videos.",
+  "main": "./src/javascripts/main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=darwin --arch=x64 --asar --icon=./img/tab.icns --prune=true --out=./application/",
+    "create-dmg": "electron-installer-dmg ./application/YouTube-Audio-Downloader-darwin-x64/YouTube-Audio-Downloader.app YouTube-Audio-Downloader-mac-x64",
+    "package-win": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=win32 --arch=x64 --asar --icon=./img/tab.ico --prune=true --out=./application/",
+    "package-linux": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=linux --arch=x64 --asar --icon=./img/tab.png --prune=true --out=./application/"
+  },
+  "repository": "https://github.com/Malte311/YouTube-Audio-Downloader",
+  "keywords": [
+    "electron",
+    "youtube-downloader",
+    "youtube-audio"
+  ],
+  "author": "Malte311",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.8.8",
+    "electron-installer-dmg": "^0.2.1",
+    "electron-packager": "^12.2.0",
+    "jsdoc": "^3.6.3",
+    "npm": "^6.10.3"
+  },
+  "dependencies": {
+    "electron-is-running-in-asar": "^1.0.0"
+  }
+}
