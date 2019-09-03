@@ -1,12 +1,20 @@
 /**
- * This file is the entry point of our app.
+ * This is the entry point of our app.
  * It creates the window and loads the index.html file.
  *
  * @module main
  * @author Malte311
  */
 
+/**
+ * Electron reference for creating the browser window.
+ */
 const electron = require('electron');
+
+/**
+ * Configuration of this project.
+ */
+const config = require('./config.js');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -20,14 +28,14 @@ function createWindow () {
     mainWindow = new electron.BrowserWindow({
         width: electron.screen.getPrimaryDisplay().size.width,
         height: electron.screen.getPrimaryDisplay().size.height,
-        //icon: __dirname + '/res/icon.ico',
+        icon: __dirname + '../../res/icon.ico',
         movable: true,
         center: true,
         fullscreen: false
-    });
-
-    // and load the index.html of the app.
-    mainWindow.loadURL('file://' + __dirname + '../html/index.html');
+	});
+	
+	// and load the index.html of the app.
+    mainWindow.loadURL('file://' + __dirname + '/../html/index.html');
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
@@ -42,6 +50,11 @@ function createWindow () {
 			require('./electronMenu.js')
 		)
 	);
+
+	mainWindow.maximize();
+
+	if (config.devMode)
+		mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished

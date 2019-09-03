@@ -1,79 +1,65 @@
 /**
- * This file creates our application menu.
+ * Creates our application menu.
  *
  * @module electronMenu
  * @author Malte311
  */
 
-const config = require('./config.js');
-
-// This array will contain the menu at the end (we will push all the information to it).
+/**
+ * This array will contain the menu at the end (we will push all the information to it).
+ */ 
 var menuTemplate = [];
 
-// Set all labels in dependency of the currently selected language.
-var editLabels = ["Edit", "Undo", "Redo", "Cut", "Copy", "Paste"];
-var windowLabels = ["Window", "Reload", "Minimize", "Close", "Exit"];
-
-// Now, add everything to our template.
+// Add everything to our template.
 menuTemplate.push({
-    label: editLabels[0],
+    label: 'Edit',
     submenu: [
         {
-            label: editLabels[1],
+            label: 'Undo',
             role: 'undo'
         },
         {
-            label: editLabels[2],
+            label: 'Redo',
             role: 'redo'
         },
         { type: 'separator' },
         {
-            label: editLabels[3],
+            label: 'Cut',
             role: 'cut'
         },
         {
-            label: editLabels[4],
+            label: 'Copy',
             role: 'copy'
         },
         {
-            label: editLabels[5],
+            label: 'Paste',
             role: 'paste'
         }
     ]
 });
 
 menuTemplate.push({
-    label: windowLabels[0],
+    label: 'Window',
     submenu: [
         {
-            label: windowLabels[1],
+            label: 'Reload',
             role: 'reload'
         },
         { type: 'separator' },
         {
-            label: windowLabels[2],
+            label: 'Minimize',
             role: 'minimize'
         },
         {
-            label: windowLabels[3],
+            label: 'Close',
             role: 'close'
         },
         {
-            label: windowLabels[4],
+            label: 'Quit',
             role: 'quit'
         }
     ]
 });
-
-if (config.devMode) {
-    menuTemplate.push({
-        label: 'Developer',
-        submenu: [
-            { role: 'forcereload' },
-            { role: 'toggledevtools' }
-        ]
-    });
-}
 
 // Export the module, so we can use it in our main.js file to create an application menu.
 module.exports = menuTemplate;
