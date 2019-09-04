@@ -6,19 +6,44 @@
  */
 
 /**
- * Holds the path to the file containing the google API key.
+ * Holds the path to the file containing the Google API key.
  */
 const API_KEY_PATH = 'api_key.txt';
+
+/**
+ * Holds the basic url of the Google API.
+ */
+const API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 
 /**
  * Searches for a given user input.
  */
 function search() {
-	var $searchInput = document.getElementById('search-input').value;
+	var $searchInput = $('#search-input').val();
+	var params = `?part=snippet&maxResults=10&type=channel&q=${$searchInput}&key=${getApiKey()}`;
 
-	sendApiRequest('GET', 'https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&forUsername=' + $searchInput + '&key=' + getApiKey(), res => {
-		console.log(res);
+	//https://www.googleapis.com/youtube/v3/channels?part=snippet&id='+commaSeperatedList+'&fields=items(id%2Csnippet%2Fthumbnails)
+
+
+	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
+		$('#search-results').html('<div class="row">');
+		for (var channel of JSON.parse(response).items) {
+			$('#search-results').append(`
+				<div class="column">
+					<div class="content">
+						<img src="${channel.snippet.thumbnails.medium.url}" style="width:100%">
+						<h3>${channel.snippet.channelTitle}</h3>
+					<p>${channel.snippet.description}</p>
+					</div>
+				</div>`
+			);
+		}
+		$('#search-results').append('</div>');
+
+		console.log(response);
 	});
+
+	return false; // Prevent redirect on form submit
 }
 
 /**
