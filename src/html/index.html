@@ -10,14 +10,23 @@
     <body>
 		<nav class="navbar navbar-light bg-light justify-content-between">
 			<a class="navbar-brand">YouTube-Audio-Downloader</a>
-			<form class="form-inline" onsubmit="return search()">
-				<input class="form-control mr-sm-2" type="search" placeholder="Add channel" aria-label="Search" id="search-input" autofocus>
+		</nav>
+		<div style="text-align: center; margin-left:25px;">
+			<h2 style="text-align: center;">My channels</h2>
+			<div id="my-channels"></div>
+			<br>
+			<button class="btn btn-outline-success">Download all new videos</button>
+		</div>
+		<hr>
+		<div style="text-align: center; margin-left:25px;">
+			<h2>Add channel</h2>
+			<form class="form-inline" onsubmit="return search()" style="margin: auto; width: 50%; display: inline-block;">
+				<input class="form-control mr-sm-2" type="search" placeholder="Search channel" aria-label="Search" id="search-input" autofocus>
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 			</form>
-		</nav>
-		<div id="my-channels"></div>
-		<hr>
-		<div id="search-results"></div>
+			<br>
+			<div id="search-results" class="row justify-content-center align-self-center"></div>
+		</div>
 	</body>
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 	<script language="javascript" src="../javascripts/jquery.min.js"></script>

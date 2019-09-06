@@ -19,13 +19,12 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
 		$(`#${parentId}`).html('');
 	
 	$(`#${parentId}`).append(`
-		<div class="card" id="${cardId}" style="width: 18rem;">
+		<div class="card" id="${cardId}" style="width: 20rem;">
 			<img src="${cardImg}" class="card-img-top">
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
-				<a href="#" class="btn btn-success">Download new videos</a>
-				<a href="#" class="btn btn-success">Download all videos</a>
-				<a href="#" class="btn btn-outline-danger">Remove channel</a>
+				<button class="btn btn-outline-success">Download all videos</button>
+				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">Remove</button>
 			</div>
 		</div>
 	`);
@@ -35,7 +34,7 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
  * Displays the search results whenever a search is done.
  * 
  * @param {string} parentId The id of the element where the card should be inserted.
- * @param {string} cardId The id of the new card.
+ * @param {string} cardId The id of the new card (which is also the channel id).
  * @param {string} cardImg The path to the image inside the card.
  * @param {string} cardTitle The title of the card.
  * @param {string} cardText The text of the card.
@@ -45,13 +44,31 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 	if (!append)
 		$(`#${parentId}`).html('');
 	
+	var btnText;
+	if (myChannels.includes(cardId)) {
+		btnText = `
+			<button class="btn btn-outline-secondary"
+					style="position:absolute; bottom:15px;" disabled>
+				Already added
+			</a>
+		`;
+	} else {
+		btnText = `
+			<button class="btn btn-outline-success" onclick="addChannel('${cardId}')"
+					style="position:absolute; bottom:15px;">
+				Add channel
+			</button>
+		`;
+	}
+
 	$(`#${parentId}`).append(`
-		<div class="card" id="${cardId}" style="width: 18rem;">
-			<img src="${cardImg}" class="card-img-top">
+		<div class="card my-auto" id="${cardId}" style="width:18rem; height:550px;
+				display:inline-block; margin-right:10px; margin-bottom:15px;">
+			<img src="${cardImg}" class="card-img-top" width="240px" height="240px">
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
 				<p class="card-text">${cardText}</p>
-				<a href="#" class="btn btn-success">Add to my channels</a>
+				${btnText}
 			</div>
 		</div>
 	`);

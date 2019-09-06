@@ -23,7 +23,7 @@ var myChannels = [];
 function loadMyChannels(callback) {
 	storage.get('myChannels', (err, data) => {
 		if (err) alert(`Error at loading from local storage:\n${err}`);
-		myChannels = data.channels;
+		myChannels = data.channels != undefined ? data.channels : [];
 		typeof callback === 'function' && callback();
 	});
 }
@@ -46,25 +46,61 @@ function saveMyChannels(callback) {
  * Displays all channels which are currently in use.
  */
 function displayMyChannels() {
-	for (const channel of myChannels) {
-		var chData = getChannelData(channel);
-		displayChannelCard('my-channels', chData.chId, chData.thumbnail, chData.chTitle, true);
+	if (!myChannels.length) {
+		$('#my-channels').html(`
+			<div class="alert alert-primary" role="alert" style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+				You have no channels added to your list yet!
+	  		</div>
+		`);
+		return;
+	} else {
+		$('#my-channels').html('');
+		for (const channel of myChannels) {
+			getChannelData(channel, chData => {
+				displayChannelCard('my-channels', chData.chId, chData.thumbnail, chData.chTitle, true);
+			});
+		}
 	}
 }
 
-function getChannelData(channelId) {
-
+/**
+ * Gets the channel data for a channel from the Google API.
+ * 
+ * @param {string} channelId The id of the channel for which we want to get the channel data.
+ * @param {function} callback Callback function containing the channel data as parameter.
+ */
+function getChannelData(channelId, callback) {
+	var params = `?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${getApiKey()}`;
+	sendApiRequest('GET', API_BASE_URL + '/channels' + params, response => {
+		var responseToJson = JSON.parse(response);
+		callback({
+			chId: responseToJson.items[0].id,
+			thumbnail: responseToJson.items[0].snippet.thumbnails.medium.url,
+			chTitle: responseToJson.items[0].snippet.title
+		});
+	});
 }
 
-function getMultipleChannelData(channelIds) {
-
+/**
+ * Adds a channel to the list of channels in use.
+ * 
+ * @param {string} channelId The id of the newly added channel.
+ */
+function addChannel(channelId) {
+	if (!myChannels.includes(channelId)) {
+		myChannels.push(channelId);
+		saveMyChannels(displayMyChannels);
+	}
 }
 
-function addChannel(channel) {
-	myChannels.push(channel);
-	saveMyChannels();
-}
-
-function removeChannel(channel) {
-	saveMyChannels();
+/**
+ * Removes a channel form the list of channels in use.
+ * 
+ * @param {string} channelId The id of the channel which should be removed.
+ */
+function removeChannel(channelId) {
+	if (myChannels.includes(channelId)) {
+		myChannels.splice(myChannels.indexOf(channelId), 1);
+		saveMyChannels(displayMyChannels);
+	}
 }
