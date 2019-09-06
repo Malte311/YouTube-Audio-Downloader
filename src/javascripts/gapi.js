@@ -1,7 +1,7 @@
 /**
- * Handles user searches.
+ * Handles Google API interactions.
  *
- * @module search
+ * @module gapi
  * @author Malte311
  */
 
@@ -22,9 +22,10 @@ function search() {
 	var $searchInput = $('#search-input').val();
 	var params = `?part=snippet&maxResults=12&type=channel&q=${$searchInput}&key=${getApiKey()}`;
 
-	$('#search-results').html('');
 	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
-		for (var channel of JSON.parse(response).items) {
+		$('#search-results').html('');
+		var items = JSON.parse(response).items;
+		for (var channel of items) {
 			displaySearchResultCard(
 				'search-results', 
 				channel.id.channelId, 
@@ -34,9 +35,28 @@ function search() {
 				true
 			);
 		}
+
+		if (!items.length)
+			displayEmptySearchResults();
 	});
 
 	return false; // Prevent redirect on form submit
+}
+
+/**
+ * Returns a list of new videos for a given channel.
+ * 
+ * @param {string} channelId The id of the channel for which we want to get the newest videos.
+ * @param {number} startTime Timestamp which determines from when on videos are new.
+ */
+function getVideos(channelId, startTime) {
+	var params = `channelId=${channelId}&maxResults=50&order=date`;
+	if (startTime != undefined)
+		params += `&publishedAfter=${startTime}`; // RFC 3339 formatted date-time value!!!
+	
+	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
+
+	});
 }
 
 /**

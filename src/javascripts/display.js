@@ -19,11 +19,11 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
 		$(`#${parentId}`).html('');
 	
 	$(`#${parentId}`).append(`
-		<div class="card" id="${cardId}" style="width: 20rem;">
+		<div class="card" id="${cardId}" style="width: 20rem; margin-right:10px;">
 			<img src="${cardImg}" class="card-img-top">
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
-				<button class="btn btn-outline-success">Download all videos</button>
+				<button class="btn btn-outline-success">Download new videos</button>
 				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">Remove</button>
 			</div>
 		</div>
@@ -72,5 +72,29 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 				${btnText}
 			</div>
 		</div>
+	`);
+}
+
+/**
+ * Displays a message that no channels are currently in use.
+ */
+function displayEmptyChannelList() {
+	$('#my-channels').html(`
+		<div class="alert alert-primary" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			You have no channels added to your list yet!
+	  	</div>
+	`);
+}
+
+/**
+ * Displays a message that no results for the query were found.
+ */
+function displayEmptySearchResults() {
+	$('#search-results').html(`
+		<div class="alert alert-primary" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			No results found.
+	  	</div>
 	`);
 }
