@@ -55,40 +55,26 @@ function displayMyChannels() {
 		return;
 	} else {
 		$('#my-channels').html('');
-		for (const channel of myChannels) {
-			getChannelData(channel, chData => {
-				displayChannelCard('my-channels', chData.chId, chData.thumbnail, chData.chTitle, true);
-			});
+		for (const ch of myChannels) {
+			displayChannelCard('my-channels', ch.channelId, ch.channelImg, ch.channelTitle, true);
 		}
 	}
-}
-
-/**
- * Gets the channel data for a channel from the Google API.
- * 
- * @param {string} channelId The id of the channel for which we want to get the channel data.
- * @param {function} callback Callback function containing the channel data as parameter.
- */
-function getChannelData(channelId, callback) {
-	var params = `?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${getApiKey()}`;
-	sendApiRequest('GET', API_BASE_URL + '/channels' + params, response => {
-		var responseToJson = JSON.parse(response);
-		callback({
-			chId: responseToJson.items[0].id,
-			thumbnail: responseToJson.items[0].snippet.thumbnails.medium.url,
-			chTitle: responseToJson.items[0].snippet.title
-		});
-	});
 }
 
 /**
  * Adds a channel to the list of channels in use.
  * 
  * @param {string} channelId The id of the newly added channel.
+ * @param {string} channelImg The thumbnail of the newly added channel.
+ * @param {string} channelTitle The title of the newly added channel.
  */
-function addChannel(channelId) {
-	if (!myChannels.includes(channelId)) {
-		myChannels.push(channelId);
+function addChannel(channelId, channelImg, channelTitle) {
+	if (!containsChannel(channelId)) {
+		myChannels.push({
+			channelId: channelId,
+			channelImg: channelImg,
+			channelTitle: channelTitle
+		});
 		saveMyChannels(displayMyChannels);
 	}
 }
@@ -99,8 +85,18 @@ function addChannel(channelId) {
  * @param {string} channelId The id of the channel which should be removed.
  */
 function removeChannel(channelId) {
-	if (myChannels.includes(channelId)) {
-		myChannels.splice(myChannels.indexOf(channelId), 1);
+	if (containsChannel(channelId)) {
+		myChannels.splice(myChannels.findIndex(e => e.channelId == channelId), 1);
 		saveMyChannels(displayMyChannels);
 	}
+}
+
+/**
+ * Checks whether a given channel is already in use or not.
+ * 
+ * @param {string} channelId The id of the channel for which we want to check if it is in use.
+ * @return True if the channel has already been added, otherwise false.
+ */
+function containsChannel(channelId) {
+	return myChannels.findIndex(e => e.channelId == channelId) != -1;
 }

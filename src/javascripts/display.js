@@ -45,7 +45,7 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 		$(`#${parentId}`).html('');
 	
 	var btnText;
-	if (myChannels.includes(cardId)) {
+	if (containsChannel(cardId)) {
 		btnText = `
 			<button class="btn btn-outline-secondary"
 					style="position:absolute; bottom:15px;" disabled>
@@ -54,7 +54,8 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 		`;
 	} else {
 		btnText = `
-			<button class="btn btn-outline-success" onclick="addChannel('${cardId}')"
+			<button class="btn btn-outline-success"
+					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')"
 					style="position:absolute; bottom:15px;">
 				Add channel
 			</button>
