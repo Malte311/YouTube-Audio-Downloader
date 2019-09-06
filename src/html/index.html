@@ -11,14 +11,19 @@
 		<nav class="navbar navbar-light bg-light justify-content-between">
 			<a class="navbar-brand">YouTube-Audio-Downloader</a>
 			<form class="form-inline" onsubmit="return search()">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="search-input" autofocus>
+				<input class="form-control mr-sm-2" type="search" placeholder="Add channel" aria-label="Search" id="search-input" autofocus>
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 			</form>
 		</nav>
+		<div id="my-channels"></div>
+		<hr>
 		<div id="search-results"></div>
 	</body>
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 	<script language="javascript" src="../javascripts/jquery.min.js"></script>
+	<script language="javascript" src="../javascripts/channel.js"></script>
+	<script language="javascript" src="../javascripts/display.js"></script>
 	<script language="javascript" src="../javascripts/search.js"></script>
+	<script language="javascript" src="../javascripts/load.js"></script>
 	<script>if (window.module) module = window.module;</script>
 </html>

@@ -26,6 +26,7 @@
     "npm": "^6.10.3"
   },
   "dependencies": {
-    "electron-is-running-in-asar": "^1.0.0"
+    "electron-is-running-in-asar": "^1.0.0",
+    "electron-json-storage": "^4.1.7"
   }
 }

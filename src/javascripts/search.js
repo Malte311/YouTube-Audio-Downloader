@@ -31,7 +31,9 @@ function search() {
 			$('#search-results').append(`
 				<div class="column">
 					<div class="content">
-						<img src="${channel.snippet.thumbnails.medium.url}" style="width:100%">
+						<a href="#" onclick="addChannel('${channel.id.channelId}')">
+							<img src="${channel.snippet.thumbnails.medium.url}" style="width:100%">
+						</a>
 						<h3>${channel.snippet.channelTitle}</h3>
 					<p>${channel.snippet.description}</p>
 					</div>
@@ -40,7 +42,7 @@ function search() {
 		}
 		$('#search-results').append('</div>');
 
-		console.log(response);
+		//console.log(response);
 	});
 
 	return false; // Prevent redirect on form submit
