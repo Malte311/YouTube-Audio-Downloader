@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Adds, edits and removes html elements.
  *

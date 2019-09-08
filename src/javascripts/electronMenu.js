@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Creates our application menu.
  *

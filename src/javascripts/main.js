@@ -1,3 +1,4 @@
+'use strict';
 /**
  * This is the entry point of our app.
  * It creates the window and loads the index.html file.

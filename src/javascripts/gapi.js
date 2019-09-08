@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Handles Google API interactions.
  *

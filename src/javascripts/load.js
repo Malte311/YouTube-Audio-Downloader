@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Initializes the application at startup.
  *
