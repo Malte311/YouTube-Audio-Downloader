@@ -6,12 +6,7 @@
  * @author Malte311
  */
 
-/**
- * Loads all neccessary data.
- */
-function load() {
+(function() {
 	// Loads the saved channels and displays them afterwards.
 	loadMyChannels(displayMyChannels);
-}
-
-load();
+})();
