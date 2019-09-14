@@ -69,7 +69,8 @@ function addChannel(channelId, channelImg, channelTitle) {
 		myChannels.push({
 			channelId: channelId,
 			channelImg: channelImg,
-			channelTitle: channelTitle
+			channelTitle: channelTitle,
+			startTime: undefined
 		});
 		saveMyChannels(displayMyChannels);
 	}

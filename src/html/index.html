@@ -15,17 +15,25 @@
 			<h2 style="text-align: center;">My channels</h2>
 			<div id="my-channels" class="row justify-content-center align-self-center"></div>
 			<br>
-			<button class="btn btn-outline-success">Download all new videos</button>
+			<button class="btn btn-outline-success" onclick="downloadAllVideos()">Download all new videos</button>
 		</div>
 		<hr>
 		<div style="text-align: center; margin-left:25px;">
 			<h2>Add channel</h2>
-			<form class="form-inline" onsubmit="return search()" style="margin: auto; width: 50%; display: inline-block;">
+			<form class="form-inline" onsubmit="search(); return false;" style="margin: auto; width: 50%; display: inline-block;">
 				<input class="form-control mr-sm-2" type="search" placeholder="Search channel" aria-label="Search" id="search-input" autofocus>
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 			</form>
 			<br>
 			<div id="search-results" class="row justify-content-center align-self-center"></div>
+		</div>
+		<hr>
+		<div style="text-align: center; margin-left:25px;">
+			<h2>Download single video</h2>
+			<form class="form-inline" onsubmit="downloadVideo($('#dl-input').val()); return false;" style="margin: auto; width: 50%; display: inline-block;">
+				<input class="form-control mr-sm-2" type="search" placeholder="Full video URL" aria-label="Search" id="dl-input" autofocus>
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Download</button>
+			</form>
 		</div>
 	</body>
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
@@ -33,6 +41,7 @@
 	<script language="javascript" src="../javascripts/channel.js"></script>
 	<script language="javascript" src="../javascripts/display.js"></script>
 	<script language="javascript" src="../javascripts/gapi.js"></script>
+	<script language="javascript" src="../javascripts/videos.js"></script>
 	<script language="javascript" src="../javascripts/load.js"></script>
 	<script>if (window.module) module = window.module;</script>
 </html>

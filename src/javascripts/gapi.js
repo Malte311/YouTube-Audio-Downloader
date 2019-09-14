@@ -40,8 +40,6 @@ function search() {
 		if (!items.length)
 			displayEmptySearchResults();
 	});
-
-	return false; // Prevent redirect on form submit
 }
 
 /**
@@ -49,14 +47,17 @@ function search() {
  * 
  * @param {string} channelId The id of the channel for which we want to get the newest videos.
  * @param {number} startTime Timestamp which determines from when on videos are new.
+ * @param {function} callback Callback containing the result as a parameter.
  */
-function getVideos(channelId, startTime) {
-	var params = `channelId=${channelId}&maxResults=50&order=date`;
+function getVideos(channelId, startTime, callback) {
+	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=50&order=date`;
 	if (startTime != undefined)
-		params += `&publishedAfter=${startTime}`; // RFC 3339 formatted date-time value!!!
+		params += `&publishedAfter=${new Date(startTime)}`;
+
+	params += `&key=${getApiKey()}`;
 	
 	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
-
+		callback(response);
 	});
 }
 

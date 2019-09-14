@@ -24,8 +24,13 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
 			<img src="${cardImg}" class="card-img-top">
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
-				<button class="btn btn-outline-success">Download new videos</button>
-				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">Remove</button>
+				<button class="btn btn-outline-success" 
+						onclick="downloadVideosFromChannel('${cardId}')">
+					Download new videos
+				</button>
+				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
+					Remove
+				</button>
 			</div>
 		</div>
 	`);

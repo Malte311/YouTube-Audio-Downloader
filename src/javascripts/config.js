@@ -12,5 +12,6 @@
 const isRunningInAsar = require('electron-is-running-in-asar');
 
 module.exports = {
-	devMode: !isRunningInAsar()
+	devMode: !isRunningInAsar(),
+	outputPath: 'C:/Users/Malte/Downloads/' // Set output path here (make sure the directory exists)
 }
