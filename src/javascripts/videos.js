@@ -48,7 +48,8 @@ function downloadVideosFromChannel(channelId, startTime) {
 		for (const item of response.items) {
 			var videoLink = `https://www.youtube.com/watch/?v=${item.id.videoId}`;
 			var newestDate = new Date(item.snippet.publishedAt).getTime();
-			var title;
+			var title = item.snippet.title;
+			//downloadVideo(videoLink, title);
 		}
 	});
 }
@@ -63,8 +64,14 @@ function downloadVideo(videoUrl, title = undefined) {
 	if (title == undefined)
 		title = 'Untitled';
 
-	ytdl(videoUrl, {
+	var video = ytdl(videoUrl, {
 		quality: 'highestaudio',
 		filter: 'audioonly'
-	}).pipe(fs.createWriteStream(config.outputPath + title + '.mp3'));
+	});
+
+	video.pipe(fs.createWriteStream(config.outputPath + title + '.mp3'));
+
+	video.on('progress', (len, done, total) => {
+		console.log(((done / total) * 100).toFixed(2) + '%');
+	});
 }

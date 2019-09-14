@@ -97,3 +97,15 @@ function removeChannel(channelId) {
 function containsChannel(channelId) {
 	return myChannels.findIndex(e => e.channelId == channelId) != -1;
 }
+
+/**
+ * Sets the start time for a given channel.
+ * 
+ * @param {string} channelId The id of the channel for which we want to set the start time.
+ * @param {number} startTime The timestamp for the new start time.
+ */
+function setChannelStartTime(channelId, startTime) {
+	var index = myChannels.findIndex(e => e.channelId == channelId);
+	myChannels[index].startTime = startTime;
+	saveMyChannels();
+}
