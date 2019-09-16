@@ -104,3 +104,55 @@ function displayEmptySearchResults() {
 	  	</div>
 	`);
 }
+
+/**
+ * Displays the download progress.
+ * 
+ * @param {string} divId The id of the div in which the progress should be displayed.
+ * @param {number} currentNum Number of the video which is currently being downloaded.
+ * @param {number} totalNum Total number of videos to be downloaded.
+ * @param {number} progress Progress of the current download (in percent).
+ */
+function displayDownloadProgress(divId, currentNum, totalNum, progress) {
+	$(`#${divId}`).html(`
+		<div style="width: 100%;">
+			Downloading video ${currentNum} of ${totalNum}...
+		</div>
+		<div class="progress" style="width: 40%; display: block;">
+			<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: ${progress}%;">
+				${progress}%
+			</div>
+		</div>
+	`);
+}
+
+/**
+ * Displays a message which says that there are no new videos available. The message is removed
+ * after a few seconds.
+ */
+function displayNoNewVideosMessage() {
+	$('#dl-progress').html(`
+		<div class="alert alert-danger" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			No new videos available!
+		</div>
+	`);
+
+	setTimeout(() => {
+		$('#dl-progress').html('');
+	}, 3000);
+}
+
+/**
+ * Displays a message that all downloads have been completed.
+ * 
+ * @param {string} divId The id of the div in which the progress should be displayed.
+ */
+function displayDownloadsComplete(divId) {
+	$(`#${divId}`).html(`
+		<div class="alert alert-success" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			All downloads completed!
+		</div>
+	`);
+}
