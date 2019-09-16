@@ -6,6 +6,7 @@
 		<link rel="shortcut icon" href="../../res/icon.ico">
 		<link rel="stylesheet" type="text/css" href="../style/style.css">
 		<link rel="stylesheet" type="text/css" href="../style/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../style/jquery-ui/jquery-ui.min.css">
     </head>
     <body>
 		<nav class="navbar navbar-light bg-light justify-content-between">
@@ -18,6 +19,7 @@
 			<button class="btn btn-outline-success" onclick="downloadAllVideos()">Download all new videos</button>
 			<br>
 			<div id="dl-progress" class="row justify-content-center align-self-center"></div>
+			<div id="show-dialog"></div>
 		</div>
 		<hr>
 		<div style="text-align: center; margin-left:25px;">
@@ -42,9 +44,11 @@
 	</body>
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 	<script language="javascript" src="../javascripts/jquery.min.js"></script>
+	<script language="javascript" src="../javascripts/jquery-ui.min.js"></script>
 	<script language="javascript" src="../javascripts/channel.js"></script>
 	<script language="javascript" src="../javascripts/display.js"></script>
 	<script language="javascript" src="../javascripts/gapi.js"></script>
+	<script language="javascript" src="../javascripts/util.js"></script>
 	<script language="javascript" src="../javascripts/videos.js"></script>
 	<script language="javascript" src="../javascripts/load.js"></script>
 	<script>if (window.module) module = window.module;</script>

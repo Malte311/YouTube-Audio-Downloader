@@ -112,7 +112,8 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 			storage.set('autoNumber', {
 				autoNumber: autoNumber
 			}, err => {
-				if (err) alert(`Error at saving to local storage:\n${err}`);
+				if (err)
+					createDialog('show-dialog', 'Error', `Error at saving to local storage:\n${err}`);
 
 				typeof callback === 'function' && callback();
 
@@ -121,29 +122,4 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 			});
 		});
 	}
-}
-
-/**
- * Creates an asynchronous array loop, i.e., each iteration waits for the asynchronous call of
- * the last iteration before beginning.
- * 
- * @param {object[]} arr The array we want to iterate over.
- * @param {function} loopFunction The function which does things with the element. Gets two params:
- * (item, callback) where item is the array element and callback is the callback function.
- * @param {number} ind Index for next element to process.
- * @param {function} [callback] Optional callback function, executed after the loop is done.
- */
-function asyncArrLoop(arr, loopFunction, ind, callback) {
-	if (!(arr.length > 0)) {
-		typeof callback === 'function' && callback();
-		return;
-	}
-
-	var inCallback = loopFunction; // To avoid name conflict
-	loopFunction(arr[ind], () => {
-		if (++ind < arr.length)
-			asyncArrLoop(arr, inCallback, ind, callback);
-		else
-			typeof callback === 'function' && callback();
-	});
 }
