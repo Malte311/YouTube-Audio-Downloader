@@ -66,15 +66,16 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 		if (response.nextPageToken && !finished) {
 			downloadVideosFromChannel(channelId, startTime, queue, response.nextPageToken);
 		} else {
-			let totalDownloads = queue.length;
-			if (!totalDownloads) { // No downloads at all
+			let totalDls = queue.length;
+			if (!totalDls) { // No downloads at all
 				displayNoNewVideosMessage();
 				return;
 			}
 				
-			let current = 0;
+			let curr = 0;
 			asyncArrLoop(queue, (vid, callback) => {
-				downloadVideo(vid.videoLink, totalDownloads, ++current, vid.videoTitle, callback);
+				let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
+				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
 			}, 0);
 		}
 	}, nextPage);
@@ -83,31 +84,35 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 /**
  * Downloads a video by its url.
  * 
- * @param {string} videoUrl The url of the video we want to download.
- * @param {number} totalDownloads The number of videos which are going to be downloaded.
+ * @param {string} url The url of the video we want to download.
+ * @param {number} totalDls The number of videos which are going to be downloaded.
  * @param {number} current The number of the current download.
  * @param {string} [title] The title for the video.
+ * @param {string} [chTitle] The title of the channel from which we are currently downloading.
  * @param {function} [callback] Callback which is called when the download is completed.
  */
-function downloadVideo(videoUrl, totalDownloads, current, title = undefined, callback) {
-	if (title == undefined)
-		title = 'Untitled';
+function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
+	if (title == undefined) {
+		getVideoTitle(url, response => {
+			downloadVideo(url, totalDls, current, response, chTitle, callback);
+		});
+	} else {
+		let video = ytdl(url); // No options here, because it is way faster!
+		video.pipe(fs.createWriteStream(`${config.outputPath}${title}.mp3`));
 
-	let video = ytdl(videoUrl); // No options here, because it is way faster!
-	video.pipe(fs.createWriteStream(`${config.outputPath}${title}.mp3`));
+		let $divId = totalDls > 1 ? 'dl-progress' : 'dl-progress-single';
+		video.on('progress', (packetLen, done, total) => {
+			let progress = Math.round((done / total) * 100);
+			displayDownloadProgress($divId, current, totalDls, progress, chTitle);
+		});
 
-	let $divId = totalDownloads > 1 ? 'dl-progress' : 'dl-progress-single';
-	video.on('progress', (packetLen, done, total) => {
-		let progress = Math.round((done / total) * 100);
-		displayDownloadProgress($divId, current, totalDownloads, progress);
-	});
+		video.on('end', () => {
+			typeof callback === 'function' && callback();
 
-	video.on('end', () => {
-		typeof callback === 'function' && callback();
-
-		if (current == totalDownloads) // All downloads completed
+			if (current == totalDls) // All downloads completed
 				displayDownloadsComplete($divId);
-	});
+		});
+	}
 }
 
 /**

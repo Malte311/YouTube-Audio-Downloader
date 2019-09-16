@@ -112,11 +112,16 @@ function displayEmptySearchResults() {
  * @param {number} currentNum Number of the video which is currently being downloaded.
  * @param {number} totalNum Total number of videos to be downloaded.
  * @param {number} progress Progress of the current download (in percent).
+ * @param {string} [channelName] The name of the channel from which we are downloading currently.
  */
-function displayDownloadProgress(divId, currentNum, totalNum, progress) {
-	$(`#${divId}`).html(`
+function displayDownloadProgress(divId, currentNum, totalNum, progress, channelName) {
+	let downloadMessage = channelName != undefined ?
+		`Downloading video ${currentNum} of ${totalNum} from channel ${channelName}...` :
+		`Downloading video ${currentNum} of ${totalNum}...`;
+	
+		$(`#${divId}`).html(`
 		<div style="width: 100%;">
-			Downloading video ${currentNum} of ${totalNum}...
+			${downloadMessage}
 		</div>
 		<div class="progress" style="width: 40%; display: block;">
 			<div class="progress-bar progress-bar-striped bg-success" style="width: ${progress}%;">
@@ -152,7 +157,7 @@ function displayDownloadsComplete(divId) {
 	$(`#${divId}`).html(`
 		<div class="alert alert-success" role="alert"
 				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			All downloads completed!
+			All downloads have been completed!
 		</div>
 	`);
 }

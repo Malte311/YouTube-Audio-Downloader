@@ -66,6 +66,19 @@ function getVideos(channelId, startTime, callback, pageToken = '') {
 }
 
 /**
+ * Finds out the title of a given video.
+ * @param {string} videoUrl The url for the video.
+ * @param {function} callback Callback containing the title as a parameter.
+ */
+function getVideoTitle(videoUrl, callback) {
+	let videoId = videoUrl.split('?v=')[1];
+	let params = `?part=snippet&id=${videoId}&key=${getApiKey()}`;
+	sendApiRequest('GET', API_BASE_URL + '/videos' + params, response => {
+		callback(JSON.parse(response).items[0].snippet.title);
+	});
+}
+
+/**
  * Sends a request to the google API.
  * 
  * @param {DOMString} method The HTTP method, e.g. GET, POST, PUT, DELETE.
