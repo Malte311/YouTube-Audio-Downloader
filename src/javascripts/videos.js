@@ -100,13 +100,13 @@ function downloadVideo(videoUrl, totalDownloads, current, title = undefined, cal
 	video.on('progress', (packetLen, done, total) => {
 		let progress = Math.round((done / total) * 100);
 		displayDownloadProgress($divId, current, totalDownloads, progress);
+	});
 
-		if (progress == 100) {
-			typeof callback === 'function' && callback();
+	video.on('end', () => {
+		typeof callback === 'function' && callback();
 
-			if (current == totalDownloads) // All downloads completed
+		if (current == totalDownloads) // All downloads completed
 				displayDownloadsComplete($divId);
-		}
 	});
 }
 
@@ -129,7 +129,7 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
 	var inCallback = loopFunction; // To avoid name conflict
 	loopFunction(arr[ind], () => {
 		if (++ind < arr.length)
-			asyncArrLoop(arr, inCallback, callback, ind);
+			asyncArrLoop(arr, inCallback, ind, callback);
 		else
 			typeof callback === 'function' && callback();
 	});

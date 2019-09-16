@@ -119,7 +119,7 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress) {
 			Downloading video ${currentNum} of ${totalNum}...
 		</div>
 		<div class="progress" style="width: 40%; display: block;">
-			<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: ${progress}%;">
+			<div class="progress-bar progress-bar-striped bg-success" style="width: ${progress}%;">
 				${progress}%
 			</div>
 		</div>
