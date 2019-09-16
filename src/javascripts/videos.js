@@ -94,11 +94,13 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
 	if (title == undefined) {
 		getVideoTitle(url, response => {
-			downloadVideo(url, totalDls, current, response, chTitle, callback);
+			let newTitle = response != undefined ? response : 'Untitled'; // Avoid endless loops
+			downloadVideo(url, totalDls, current, newTitle, chTitle, callback);
 		});
 	} else {
 		let video = ytdl(url); // No options here, because it is way faster!
-		video.pipe(fs.createWriteStream(`${config.outputPath}${title}.mp3`));
+		video.pipe(fs.createWriteStream(`${config.outputPath}${autoNumber} - ${title}.mp3`));
+		autoNumber = zeroPad((parseInt(autoNumber) + 1).toString(), autoNumber.length);
 
 		let $divId = totalDls > 1 ? 'dl-progress' : 'dl-progress-single';
 		video.on('progress', (packetLen, done, total) => {
@@ -107,10 +109,16 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 
 		video.on('end', () => {
-			typeof callback === 'function' && callback();
+			storage.set('autoNumber', {
+				autoNumber: autoNumber
+			}, err => {
+				if (err) alert(`Error at saving to local storage:\n${err}`);
 
-			if (current == totalDls) // All downloads completed
-				displayDownloadsComplete($divId);
+				typeof callback === 'function' && callback();
+
+				if (current == totalDls) // All downloads completed
+					displayDownloadsComplete($divId);
+			});
 		});
 	}
 }
