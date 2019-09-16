@@ -15,4 +15,4 @@ npm run package-mac
 npm run create-dmg
 
 # Documentation, generated in directory ./out
-jsdoc -R readme.md -r scripts
+jsdoc -R readme.md -r ./src/javascripts
