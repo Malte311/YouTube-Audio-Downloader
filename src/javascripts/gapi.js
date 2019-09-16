@@ -48,11 +48,15 @@ function search() {
  * @param {string} channelId The id of the channel for which we want to get the newest videos.
  * @param {number} startTime Timestamp which determines from when on videos are new.
  * @param {function} callback Callback containing the result as a parameter.
+ * @param {string} [pageToken] Token for a specific page of the search results.
  */
-function getVideos(channelId, startTime, callback) {
+function getVideos(channelId, startTime, callback, pageToken = '') {
 	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=50&order=date`;
 	if (startTime != undefined)
 		params += `&publishedAfter=${new Date(startTime)}`;
+
+	if (pageToken.length)
+		params += `&pageToken=${pageToken}`;
 
 	params += `&key=${getApiKey()}`;
 	

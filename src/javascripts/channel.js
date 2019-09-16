@@ -99,13 +99,14 @@ function containsChannel(channelId) {
 }
 
 /**
- * Sets the start time for a given channel.
+ * Sets a property for a given channel.
  * 
- * @param {string} channelId The id of the channel for which we want to set the start time.
- * @param {number} startTime The timestamp for the new start time.
+ * @param {string} channelId The id of the channel for which we want to set the property.
+ * @param {string} property The property which we want to set.
+ * @param {any} value The new value for the property.
  */
-function setChannelStartTime(channelId, startTime) {
+function setChannelProperty(channelId, property, value) {
 	var index = myChannels.findIndex(e => e.channelId == channelId);
-	myChannels[index].startTime = startTime;
+	myChannels[index][property] = value;
 	saveMyChannels();
 }
