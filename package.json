@@ -5,10 +5,10 @@
   "main": "./src/javascripts/main.js",
   "scripts": {
     "start": "electron .",
-    "package-mac": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=darwin --arch=x64 --asar --icon=./img/tab.icns --prune=true --out=./application/",
+    "package-mac": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=darwin --arch=x64 --asar --icon=./res/icon.icns --prune=true --out=./application/",
     "create-dmg": "electron-installer-dmg ./application/YouTube-Audio-Downloader-darwin-x64/YouTube-Audio-Downloader.app YouTube-Audio-Downloader-mac-x64",
-    "package-win": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=win32 --arch=x64 --asar --icon=./img/tab.ico --prune=true --out=./application/",
-    "package-linux": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=linux --arch=x64 --asar --icon=./img/tab.png --prune=true --out=./application/"
+    "package-win": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=win32 --arch=x64 --asar --icon=./res/icon.ico --prune=true --out=./application/",
+    "package-linux": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=linux --arch=x64 --asar --icon=./res/icon.png --prune=true --out=./application/"
   },
   "repository": "https://github.com/Malte311/YouTube-Audio-Downloader",
   "keywords": [

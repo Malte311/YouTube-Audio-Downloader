@@ -48,6 +48,7 @@ function downloadVideosFromChannel(channelId, startTime) {
 		for (const item of response.items) {
 			var videoLink = `https://www.youtube.com/watch/?v=${item.id.videoId}`;
 			var newestDate = new Date(item.snippet.publishedAt).getTime();
+			//setChannelStartTime(channelId, newestDate);
 			var title = item.snippet.title;
 			//downloadVideo(videoLink, title);
 		}
