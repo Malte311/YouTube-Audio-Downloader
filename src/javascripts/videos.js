@@ -64,6 +64,7 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 			let totalDls = queue.length;
 			if (!totalDls) { // No downloads at all
 				displayNoNewVideosMessage();
+				toggleDownloadButtons();
 				return;
 			}
 				
@@ -87,6 +88,12 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
  * @param {function} [callback] Callback which is called when the download is completed.
  */
 function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
+	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
+		createDialog('show-dialog', 'Invalid URL', 'This is not a valid YouTube URL!');
+		toggleDownloadButtons();
+		return;
+	}
+
 	if (title == undefined) {
 		getVideoTitle(url, response => {
 			let newTitle = response != undefined ? response : 'Untitled'; // Avoid endless loops
@@ -107,9 +114,21 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 			updateConfig('autoNumber', n, () => {
 				typeof callback === 'function' && callback();
 
-				if (current == totalDls) // All downloads completed
+				if (current == totalDls) { // All downloads completed
 					displayDownloadsComplete($divId);
+					toggleDownloadButtons(); // New downloads can be started now
+				}
 			});
 		});
 	}
+}
+
+/**
+ * Checks if a given url is a valid YouTube url.
+ * 
+ * @param {string} url The url which we want to check.
+ */
+function isValidUrl(url) {
+	let regex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})?$/;
+	return regex.test(url);
 }

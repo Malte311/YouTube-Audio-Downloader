@@ -24,8 +24,8 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
 			<img src="${cardImg}" class="card-img-top">
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
-				<button class="btn btn-outline-success" 
-						onclick="downloadVideosFromChannel('${cardId}')">
+				<button class="btn btn-outline-success dwnld" 
+						onclick="toggleDownloadButtons(); downloadVideosFromChannel('${cardId}')">
 					Download new videos
 				</button>
 				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
@@ -262,4 +262,11 @@ function appendButton(divId, btnId, btnText, callback) {
 	`);
 
 	typeof callback === 'function' && $(`#${btnId}`).click(callback);
+}
+
+/**
+ * Disables all download buttons while downloading and enables them when no downloads are active.
+ */
+function toggleDownloadButtons() {
+	$('.dwnld').prop('disabled', !$('.dwnld').prop('disabled'));
 }

@@ -49,7 +49,7 @@ function search() {
 function getVideos(channelId, startTime, callback, pageToken = '', maxRes = 50) {
 	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=${maxRes}&order=date`;
 	if (startTime != undefined)
-		params += `&publishedAfter=${new Date(startTime)}`;
+		params += `&publishedAfter=${new Date(startTime).toISOString()}`;
 
 	if (pageToken.length)
 		params += `&pageToken=${pageToken}`;

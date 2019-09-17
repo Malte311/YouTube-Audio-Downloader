@@ -16,7 +16,7 @@
 			<h2 style="text-align: center;">My channels</h2>
 			<div id="my-channels" class="row justify-content-center align-self-center"></div>
 			<br>
-			<button class="btn btn-outline-success" onclick="downloadAllVideos()">Download all new videos</button>
+			<button class="btn btn-outline-success dwnld" onclick="toggleDownloadButtons(); downloadAllVideos();">Download all new videos</button>
 			<br>
 			<div id="dl-progress" class="row justify-content-center align-self-center"></div>
 			<div id="show-dialog"></div>
@@ -34,9 +34,9 @@
 		<hr>
 		<div style="text-align: center; margin-left:25px; margin-bottom:25px;">
 			<h2>Download single video</h2>
-			<form class="form-inline" onsubmit="downloadVideo($('#dl-input').val(), 1, 1); return false;" style="margin: auto; width: 50%; display: inline-block;">
+			<form class="form-inline" onsubmit="toggleDownloadButtons(); downloadVideo($('#dl-input').val(), 1, 1); return false;" style="margin: auto; width: 50%; display: inline-block;">
 				<input class="form-control mr-sm-2" type="search" placeholder="Full video URL" aria-label="Search" id="dl-input" autofocus>
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Download</button>
+				<button class="btn btn-outline-success my-2 my-sm-0 dwnld" type="submit">Download</button>
 			</form>
 			<br>
 			<div id="dl-progress-single" class="row justify-content-center align-self-center"></div>
