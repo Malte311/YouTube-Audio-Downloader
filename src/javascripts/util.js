@@ -69,10 +69,14 @@ function createDialog(divId, title, text, okCallback) {
 		height: 'auto',
 		width: 'auto',
 		title: title,
+		close : () => {
+			$(`#${divId}`).html('');
+		},
 		buttons: [
 			{
 				text: 'Confirm',
-				click: okCallback != undefined ? okCallback : () => {
+				click: () => {
+					typeof okCallback === 'function' && okCallback();
 					$(`#${divId}`).dialog('close');
 				}
 			},

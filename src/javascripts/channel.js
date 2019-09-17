@@ -84,8 +84,19 @@ function addChannel(channelId, channelImg, channelTitle) {
  * Removes a channel form the list of channels in use.
  * 
  * @param {string} channelId The id of the channel which should be removed.
+ * @param {bool} confirmed States if the deletion was confirmed or not. If not, we create
+ * a dialog in which the user has to confirm that he wants to delete the channel.
  */
-function removeChannel(channelId) {
+function removeChannel(channelId, confirmed = false) {
+	if (!confirmed) {
+		let channelName = myChannels.find(c => c.channelId == channelId).channelTitle;
+		let dialogText = `Do you really want to remove the channel ${channelName}?`;
+		createDialog('show-dialog', 'Removing channel', dialogText, () => {
+			removeChannel(channelId, true);
+		});
+		return;
+	}
+
 	if (containsChannel(channelId)) {
 		myChannels.splice(myChannels.findIndex(e => e.channelId == channelId), 1);
 		saveMyChannels(displayMyChannels);
