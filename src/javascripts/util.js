@@ -7,11 +7,6 @@
  */
 
 /**
- * Holds the number for the next download such that all downloads are numbered correctly.
- */
-var autoNumber = '0000';
-
-/**
  * Creates an asynchronous array loop, i.e., each iteration waits for the asynchronous call of
  * the last iteration before beginning.
  * 
@@ -34,24 +29,6 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
 		else
 			typeof callback === 'function' && callback();
 	});
-}
-
-/**
- * Adds zeros at the beginning of a string until it has the requested length.
- * 
- * @param {string} str The string which should get modified.
- * @param {number} totalLength The requested total length.
- * @return A string with a zero pad at the start such that its length matches the requested length.
- */
-function zeroPad(str, totalLength) {
-	if (str.length > totalLength)
-		return '0'.padStart(totalLength, '0');
-
-	for (let i = 0, end = totalLength - str.length; i < end; i++) {
-		str = '0' + str;
-	}
-
-	return str;
 }
 
 /**

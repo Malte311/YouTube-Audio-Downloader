@@ -7,11 +7,6 @@
  */
 
 /**
- * Holds the path to the file containing the Google API key.
- */
-const API_KEY_PATH = 'api_key.txt';
-
-/**
  * Holds the basic url of the Google API.
  */
 const API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
@@ -21,7 +16,7 @@ const API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
  */
 function search() {
 	var $searchInput = $('#search-input').val();
-	var params = `?part=snippet&maxResults=12&type=channel&q=${$searchInput}&key=${getApiKey()}`;
+	var params = `?part=snippet&maxResults=12&type=channel&q=${$searchInput}&key=${config.apiKey}`;
 
 	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
 		$('#search-results').html('');
@@ -59,7 +54,7 @@ function getVideos(channelId, startTime, callback, pageToken = '', maxRes = 50) 
 	if (pageToken.length)
 		params += `&pageToken=${pageToken}`;
 
-	params += `&key=${getApiKey()}`;
+	params += `&key=${config.apiKey}`;
 	
 	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
 		callback(response);
@@ -73,7 +68,7 @@ function getVideos(channelId, startTime, callback, pageToken = '', maxRes = 50) 
  */
 function getVideoTitle(videoUrl, callback) {
 	let videoId = videoUrl.split('?v=')[1];
-	let params = `?part=snippet&id=${videoId}&key=${getApiKey()}`;
+	let params = `?part=snippet&id=${videoId}&key=${config.apiKey}`;
 	sendApiRequest('GET', API_BASE_URL + '/videos' + params, response => {
 		callback(JSON.parse(response).items[0].snippet.title);
 	});
@@ -95,11 +90,4 @@ function sendApiRequest(method, url, callback) {
 	});
 
 	xmlHttp.send();
-}
-
-/**
- * Returns the google API key.
- */
-function getApiKey() {
-	return require('fs').readFileSync(API_KEY_PATH, 'utf-8').replace(/^\s+|\s+$/g, '');
 }

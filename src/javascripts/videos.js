@@ -17,11 +17,6 @@ const ytdl = require('ytdl-core');
 const fs = require('fs');
 
 /**
- * Configuration file.
- */
-const config = require('../javascripts/config.js');
-
-/**
  * Downloads all new videos.
  */
 function downloadAllVideos() {
@@ -99,8 +94,7 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 	} else {
 		let video = ytdl(url); // No options here, because it is way faster!
-		video.pipe(fs.createWriteStream(`${config.outputPath}${autoNumber} - ${title}.mp3`));
-		autoNumber = zeroPad((parseInt(autoNumber) + 1).toString(), autoNumber.length);
+		video.pipe(fs.createWriteStream(`${config.outputPath}${config.autoNumber} - ${title}.mp3`));
 
 		let $divId = totalDls > 1 ? 'dl-progress' : 'dl-progress-single';
 		video.on('progress', (packetLen, done, total) => {
@@ -109,12 +103,8 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 
 		video.on('end', () => {
-			storage.set('autoNumber', {
-				autoNumber: autoNumber
-			}, err => {
-				if (err)
-					createDialog('show-dialog', 'Error', `Error at saving to local storage:\n${err}`);
-
+			let n = (parseInt(config.autoNumber) + 1).toString().padStart(config.autoNumLen, '0');
+			updateConfig('autoNumber', n, () => {
 				typeof callback === 'function' && callback();
 
 				if (current == totalDls) // All downloads completed
