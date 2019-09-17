@@ -281,12 +281,24 @@ function toggleDownloadButtons() {
  * Displays the help dialog.
  */
 function displayHelp() {
-	createDialog('show-dialog', 'Help', 'text', undefined, true);
+	createDialog('show-dialog', 'Help', 'Coming soon!', undefined, true);
 }
 
 /**
  * Displays the settings dialog.
  */
 function displaySettings() {
-	createDialog('show-dialog', 'Settings', 'text', undefined, true);
+	let text = `
+		<h5>YouTube API key</h5>
+		<input class="form-control mr-sm-2" type="text" value="${config.apiKey}">
+		<br>
+		<h5>Output directory</h5>
+		<div class="custom-file">
+			<input class="custom-file-input" id="output-select" type="file" webkitdirectory>
+			<label class="custom-file-label" for="output-select">${config.outputPath}</label>
+		</div>
+	`;
+	createDialog('show-dialog', 'Settings', text, () => {
+
+	}, true);
 }
