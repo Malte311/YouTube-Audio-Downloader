@@ -67,8 +67,9 @@ function displayMyChannels() {
  * @param {string} channelId The id of the newly added channel.
  * @param {string} channelImg The thumbnail of the newly added channel.
  * @param {string} channelTitle The title of the newly added channel.
+ * @param {function} [callback] Callback which is executed after the channel has been added.
  */
-function addChannel(channelId, channelImg, channelTitle) {
+function addChannel(channelId, channelImg, channelTitle, callback) {
 	if (!containsChannel(channelId)) {
 		confirmAddChannel(channelId, channelTitle, startTime => {
 			myChannels.push({
@@ -78,6 +79,7 @@ function addChannel(channelId, channelImg, channelTitle) {
 				startTime: startTime
 			});
 			saveMyChannels(displayMyChannels);
+			typeof callback === 'function' && callback();
 		});
 	}
 }
@@ -108,8 +110,10 @@ function confirmAddChannel(channelId, channelTitle, callback) {
  * @param {string} channelId The id of the channel which should be removed.
  * @param {bool} [confirmed] States if the deletion was confirmed or not. If not, we create
  * a dialog in which the user has to confirm that he wants to delete the channel.
+ * @param {function} [callback] Callback which is executed after the channel has been removed.
+ * Note: If the user cancels the removal, the callback will not be executed.
  */
-function removeChannel(channelId, confirmed = false) {
+function removeChannel(channelId, confirmed = false, callback) {
 	if (!confirmed) {
 		confirmRemoveChannel(channelId);
 		return;
@@ -118,6 +122,7 @@ function removeChannel(channelId, confirmed = false) {
 	if (containsChannel(channelId)) {
 		myChannels.splice(myChannels.findIndex(e => e.channelId == channelId), 1);
 		saveMyChannels(displayMyChannels);
+		typeof callback === 'function' && callback();
 	}
 }
 

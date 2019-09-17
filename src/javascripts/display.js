@@ -50,24 +50,6 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 	if (!append)
 		$(`#${parentId}`).html('');
 	
-	var btnText;
-	if (containsChannel(cardId)) {
-		btnText = `
-			<button class="btn btn-outline-secondary"
-					style="position:absolute; bottom:15px;" disabled>
-				Already added
-			</button>
-		`;
-	} else {
-		btnText = `
-			<button class="btn btn-outline-success"
-					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')"
-					style="position:absolute; bottom:15px;">
-				Add channel
-			</button>
-		`;
-	}
-
 	$(`#${parentId}`).append(`
 		<div class="card my-auto" id="${cardId}" style="width:18rem; height:550px;
 				display:inline-block; margin-right:10px; margin-bottom:15px;">
@@ -75,10 +57,29 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
 				<p class="card-text">${cardText}</p>
-				${btnText}
+				<div id="${cardId}-div"></div>
 			</div>
 		</div>
 	`);
+
+	let btnText, _class, props, onclick, style = 'position: absolute; bottom: 15px;';
+	if (containsChannel(cardId)) {
+		btnText = 'Already added';
+		_class = 'btn btn-outline-secondary';
+		props = 'disabled';
+	} else {
+		btnText = 'Add channel';
+		_class = 'btn btn-outline-success';
+		onclick = () => {
+			addChannel(cardId, cardImg, cardTitle, () => {
+				$(`#${cardId}-btn`).remove();
+				appendButton(`${cardId}-div`, `${cardId}-btn`, 'Already added', undefined,
+						'position:absolute; bottom:15px;', 'btn btn-outline-secondary', 'disabled');
+			});
+		};
+	}
+
+	appendButton(`${cardId}-div`, `${cardId}-btn`, btnText, onclick, style, _class, props);
 }
 
 /**
@@ -251,17 +252,22 @@ function createChannelPreview(divId, channelId, pageToken = '') {
  * @param {string} divId The id of the parent element.
  * @param {string} btnId The id of the new button.
  * @param {string} btnText The text of the new button.
- * @param {function} [callback] The onclick event for the new button.
+ * @param {function} [onclick] The onclick event for the new button.
+ * @param {string} [style] The style for the button.
+ * @param {string} [_class] The class for the button.
+ * @param {string} [props] Additional properties for the button.
  */
-function appendButton(divId, btnId, btnText, callback) {
+function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
+	style = style || 'margin-top: 10px; margin-right: 10px;';
+	_class = _class || 'btn btn-outline-success';
+	props = props || '';
 	$(`#${divId}`).append(`
-		<button class="btn btn-outline-success" id="${btnId}"
-				style="margin-top: 10px; margin-right: 10px;">
+		<button class="${_class}" id="${btnId}" style="${style}" ${props}>
 			${btnText}
 		</button>
 	`);
 
-	typeof callback === 'function' && $(`#${btnId}`).click(callback);
+	typeof onclick === 'function' && $(`#${btnId}`).click(onclick);
 }
 
 /**
