@@ -49,9 +49,10 @@ function search() {
  * @param {number} startTime Timestamp which determines from when on videos are new.
  * @param {function} callback Callback containing the result as a parameter.
  * @param {string} [pageToken] Token for a specific page of the search results.
+ * @param {number} [maxRes] Amount of maximum search results, defaults to 50.
  */
-function getVideos(channelId, startTime, callback, pageToken = '') {
-	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=50&order=date`;
+function getVideos(channelId, startTime, callback, pageToken = '', maxRes = 50) {
+	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=${maxRes}&order=date`;
 	if (startTime != undefined)
 		params += `&publishedAfter=${new Date(startTime)}`;
 

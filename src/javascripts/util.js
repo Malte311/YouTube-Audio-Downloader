@@ -41,6 +41,7 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
  * 
  * @param {string} str The string which should get modified.
  * @param {number} totalLength The requested total length.
+ * @return A string with a zero pad at the start such that its length matches the requested length.
  */
 function zeroPad(str, totalLength) {
 	if (str.length > totalLength)
@@ -66,8 +67,10 @@ function createDialog(divId, title, text, okCallback) {
 	$(`#${divId}`).dialog({
 		resizable: false,
 		modal: true,
-		height: 'auto',
-		width: 'auto',
+		minHeight: 0,
+		minWidth: 600,
+		maxHeight: 600,
+		maxWidth: 1400,
 		title: title,
 		close : () => {
 			$(`#${divId}`).html('');

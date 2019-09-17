@@ -70,30 +70,48 @@ function displayMyChannels() {
  */
 function addChannel(channelId, channelImg, channelTitle) {
 	if (!containsChannel(channelId)) {
-		myChannels.push({
-			channelId: channelId,
-			channelImg: channelImg,
-			channelTitle: channelTitle,
-			startTime: undefined
+		confirmAddChannel(channelId, channelTitle, startTime => {
+			myChannels.push({
+				channelId: channelId,
+				channelImg: channelImg,
+				channelTitle: channelTitle,
+				startTime: startTime
+			});
+			saveMyChannels(displayMyChannels);
 		});
-		saveMyChannels(displayMyChannels);
 	}
+}
+
+/**
+ * Asks the user to confirm adding a new channel and lets him choose a starting point for it.
+ * 
+ * @param {string} channelId The id of the channel which should be added.
+ * @param {string} channelTitle The title of the new channel.
+ * @param {function} callback Callback containing the start time for the channel as a parameter.
+ */
+function confirmAddChannel(channelId, channelTitle, callback) {
+	let dialogText = `Select a starting point (exclusive) for the channel "${channelTitle}".
+		You can continue without selecting a starting point. In this case, the oldest video will
+		be the starting point.<br>`;
+	
+	createDialog('show-dialog', 'Adding a new channel', dialogText, () => {
+		let date = $('.start-time').prop('start-time');
+		callback(date != undefined ? (new Date(date)).getTime() : undefined);
+	});
+
+	createChannelPreview('show-dialog', channelId, '');
 }
 
 /**
  * Removes a channel form the list of channels in use.
  * 
  * @param {string} channelId The id of the channel which should be removed.
- * @param {bool} confirmed States if the deletion was confirmed or not. If not, we create
+ * @param {bool} [confirmed] States if the deletion was confirmed or not. If not, we create
  * a dialog in which the user has to confirm that he wants to delete the channel.
  */
 function removeChannel(channelId, confirmed = false) {
 	if (!confirmed) {
-		let channelName = myChannels.find(c => c.channelId == channelId).channelTitle;
-		let dialogText = `Do you really want to remove the channel ${channelName}?`;
-		createDialog('show-dialog', 'Removing channel', dialogText, () => {
-			removeChannel(channelId, true);
-		});
+		confirmRemoveChannel(channelId);
 		return;
 	}
 
@@ -101,6 +119,19 @@ function removeChannel(channelId, confirmed = false) {
 		myChannels.splice(myChannels.findIndex(e => e.channelId == channelId), 1);
 		saveMyChannels(displayMyChannels);
 	}
+}
+
+/**
+ * Asks the user to confirm that he wants to remove a channel.
+ * 
+ * @param {string} channelId The id of the channel which should get removed.
+ */
+function confirmRemoveChannel(channelId) {
+	let channelName = myChannels.find(c => c.channelId == channelId).channelTitle;
+	let dialogText = `Do you really want to remove the channel "${channelName}"?`;
+	createDialog('show-dialog', 'Removing channel', dialogText, () => {
+		removeChannel(channelId, true);
+	});
 }
 
 /**
