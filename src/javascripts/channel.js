@@ -23,8 +23,10 @@ var myChannels = [];
  */
 function loadMyChannels(callback) {
 	storage.get('myChannels', (err, data) => {
-		if (err)
-			createDialog('show-dialog', 'Error', `Error at loading from local storage:\n${err}`);
+		if (err) {
+			let errMsg = `Error at loading from local storage:<br>${err}`;
+			createDialog('show-dialog', 'Error', errMsg, undefined, true);
+		}
 		
 		myChannels = data.channels != undefined ? data.channels : [];
 		typeof callback === 'function' && callback();
@@ -40,8 +42,10 @@ function saveMyChannels(callback) {
 	storage.set('myChannels', {
 		channels: myChannels
 	}, err => {
-		if (err)
-			createDialog('show-dialog', 'Error', `Error at saving to local storage:\n${err}`);
+		if (err) {
+			let errMsg = `Error at saving to local storage:<br>${err}`;
+			createDialog('show-dialog', 'Error', errMsg, undefined, true);
+		}
 
 		typeof callback === 'function' && callback();
 	});

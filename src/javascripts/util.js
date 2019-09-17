@@ -38,9 +38,30 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
  * @param {string} title The title of the dialog.
  * @param {string} text The content of the dialog.
  * @param {function} [okCallback] A function to be executed when the confirm button was pressed.
+ * @param {bool} [noCancel] Specifies if the cancel button should be removed.
  */
-function createDialog(divId, title, text, okCallback) {
+function createDialog(divId, title, text, okCallback, noCancel = false) {
 	$(`#${divId}`).html(text);
+
+	let buttons = [
+		{
+			text: 'Confirm',
+			click: () => {
+				typeof okCallback === 'function' && okCallback();
+				$(`#${divId}`).dialog('close');
+			}
+		},
+		{
+			text: 'Cancel',
+			click: () => {
+				$(`#${divId}`).dialog('close');
+			}
+		}
+	];
+
+	if (noCancel)
+		buttons.splice(1, 1);
+
 	$(`#${divId}`).dialog({
 		resizable: false,
 		modal: true,
@@ -52,20 +73,6 @@ function createDialog(divId, title, text, okCallback) {
 		close : () => {
 			$(`#${divId}`).html('');
 		},
-		buttons: [
-			{
-				text: 'Confirm',
-				click: () => {
-					typeof okCallback === 'function' && okCallback();
-					$(`#${divId}`).dialog('close');
-				}
-			},
-			{
-				text: 'Cancel',
-				click: () => {
-					$(`#${divId}`).dialog('close');
-				}
-			}
-		]
+		buttons: buttons
 	});
 }

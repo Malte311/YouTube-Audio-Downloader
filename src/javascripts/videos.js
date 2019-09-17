@@ -89,7 +89,7 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
  */
 function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
 	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
-		createDialog('show-dialog', 'Invalid URL', 'This is not a valid YouTube URL!');
+		createDialog('show-dialog', 'Invalid URL', 'This is not a valid YouTube URL!', undefined, true);
 		toggleDownloadButtons();
 		return;
 	}

@@ -276,3 +276,17 @@ function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
 function toggleDownloadButtons() {
 	$('.dwnld').prop('disabled', !$('.dwnld').prop('disabled'));
 }
+
+/**
+ * Displays the help dialog.
+ */
+function displayHelp() {
+	createDialog('show-dialog', 'Help', 'text', undefined, true);
+}
+
+/**
+ * Displays the settings dialog.
+ */
+function displaySettings() {
+	createDialog('show-dialog', 'Settings', 'text', undefined, true);
+}

@@ -24,8 +24,10 @@ var config = require('../javascripts/config.js');
  */
 function loadConfig(callback) {
 	storage.get('config', (err, data) => {
-		if (err)
-			createDialog('show-dialog', 'Error', `Error at loading from local storage:\n${err}`);
+		if (err) {
+			let errMsg = `Error at loading from local storage:<br>${err}`;
+			createDialog('show-dialog', 'Error', errMsg, undefined, true);
+		}
 		
 		config = data.config != undefined ? data.config : config;
 		
@@ -43,8 +45,10 @@ function loadConfig(callback) {
 function updateConfig(key, val, callback) {
 	config[key] = val;
 	storage.set('config', config, err => {
-		if (err)
-			createDialog('show-dialog', 'Error', `Error at saving to local storage:\n${err}`);
+		if (err) {
+			let errMsg = `Error at saving to local storage:<br>${err}`;
+			createDialog('show-dialog', 'Error', errMsg, undefined, true);
+		}
 
 		typeof callback === 'function' && callback();
 	});
