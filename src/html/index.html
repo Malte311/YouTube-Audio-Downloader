@@ -27,6 +27,7 @@
 			<form class="form-inline" onsubmit="search(); return false;" style="margin: auto; width: 50%; display: inline-block;">
 				<input class="form-control mr-sm-2" type="search" placeholder="Search channel" aria-label="Search" id="search-input" autofocus>
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				<button class="btn btn-outline-danger my-2 my-sm-0" type="button" onclick="$('#search-input').val(''); $('#search-results').html('');">Reset</button>
 			</form>
 			<br>
 			<div id="search-results" class="row justify-content-center align-self-center"></div>
