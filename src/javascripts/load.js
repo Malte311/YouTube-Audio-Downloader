@@ -36,6 +36,8 @@ function loadConfig(callback) {
 
 		if (config.outputPath == '')
 			updateConfig('outputPath', remote.app.getAppPath('downloads'), callback);
+		else
+			typeof callback === 'function' && callback();
 	});
 }
 

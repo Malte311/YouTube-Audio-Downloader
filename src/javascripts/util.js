@@ -72,7 +72,12 @@ function createDialog(divId, title, text, okCallback, noCancel = false) {
 		title: title,
 		close : () => {
 			$(`#${divId}`).html('');
+			$('body').css({overflow: 'inherit'});
+			$('#main').css({'opacity': 1});
 		},
 		buttons: buttons
 	});
+
+	$('body').css({overflow: 'hidden'});
+	$('#main').css({'opacity': 0.3});
 }

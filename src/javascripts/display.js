@@ -173,8 +173,7 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress, channelN
 }
 
 /**
- * Displays a message which says that there are no new videos available. The message is removed
- * after a few seconds.
+ * Displays a message which says that there are no new videos available.
  */
 function displayNoNewVideosMessage() {
 	$('#dl-progress').html(`
@@ -183,10 +182,6 @@ function displayNoNewVideosMessage() {
 			No new videos available!
 		</div>
 	`);
-
-	setTimeout(() => {
-		$('#dl-progress').html('');
-	}, 3000);
 }
 
 /**

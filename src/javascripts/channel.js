@@ -29,6 +29,7 @@ function loadMyChannels(callback) {
 		}
 		
 		myChannels = data.channels != undefined ? data.channels : [];
+
 		typeof callback === 'function' && callback();
 	});
 }
@@ -82,7 +83,9 @@ function addChannel(channelId, channelImg, channelTitle, callback) {
 				channelTitle: channelTitle,
 				startTime: startTime
 			});
+
 			saveMyChannels(displayMyChannels);
+			
 			typeof callback === 'function' && callback();
 		});
 	}

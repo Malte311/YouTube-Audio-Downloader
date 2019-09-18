@@ -20,8 +20,12 @@ const fs = require('fs');
  * Downloads all new videos.
  */
 function downloadAllVideos() {
-	for (const channel of myChannels) {
+	for (const channel of myChannels)
 		downloadVideosFromChannel(channel.channelId, parseInt(channel.startTime));
+
+	if (!myChannels.length) {
+		createDialog('show-dialog', 'Error', 'You have no channels added yet!', undefined, true);
+		toggleDownloadButtons();
 	}
 }
 
