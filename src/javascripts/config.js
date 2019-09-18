@@ -16,5 +16,5 @@ module.exports = {
 	autoNumber: '0000',
 	autoNumLen: 4,
 	devMode: !isRunningInAsar(),
-	outputPath: './' // Set output path here (make sure the directory exists)
+	outputPath: ''
 }

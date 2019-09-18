@@ -33,8 +33,9 @@ function loadConfig(callback) {
 
 		if (config.apiKey == '')
 			displayErrorMessage('You need a YouTube API key in order to use this application!');
-		
-		typeof callback === 'function' && callback();
+
+		if (config.outputPath == '')
+			updateConfig('outputPath', remote.app.getAppPath('downloads'), callback);
 	});
 }
 
