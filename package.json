@@ -1,6 +1,6 @@
 {
   "name": "YouTube-Audio-Downloader",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "Download audio tracks from YouTube videos.",
   "main": "./src/javascripts/main.js",
   "scripts": {

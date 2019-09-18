@@ -5,7 +5,6 @@ keeps track of new videos for you.
 
 ***
 ## Installation
-:warning: COMING SOON :warning:
 You can get the latest version of this application [here](https://github.com/Malte311/YouTube-Audio-Downloader/releases).
 Simply download the correct `ZIP`-archive and unzip it.
 
