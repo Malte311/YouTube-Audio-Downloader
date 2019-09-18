@@ -324,6 +324,11 @@ function displaySettings() {
 	createDialog('show-dialog', 'Settings', text, () => {
 		updateConfig('apiKey', $('#api-select').val());
 
+		if (config.apiKey.length)
+			removeErrorMessage();
+		else
+			displayErrorMessage('You need a YouTube API key in order to use this application!');
+
 		let path = $('#out-select').val();
 		fs.access(path, err => {
 			if (err)
@@ -341,4 +346,11 @@ function displaySettings() {
  */
 function displayErrorMessage(msg) {
 	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
+}
+
+/**
+ * Removes the error message from the navbar.
+ */
+function removeErrorMessage() {
+	$('#error-msg').html('');
 }

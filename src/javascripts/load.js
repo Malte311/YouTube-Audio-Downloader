@@ -29,7 +29,7 @@ function loadConfig(callback) {
 			createDialog('show-dialog', 'Error', errMsg, undefined, true);
 		}
 		
-		config = data != undefined ? data : config;
+		config = (data != undefined && !jQuery.isEmptyObject(data)) ? data : config;
 
 		if (config.apiKey == '')
 			displayErrorMessage('You need a YouTube API key in order to use this application!');
