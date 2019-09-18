@@ -29,7 +29,10 @@ function loadConfig(callback) {
 			createDialog('show-dialog', 'Error', errMsg, undefined, true);
 		}
 		
-		config = data.config != undefined ? data.config : config;
+		config = data != undefined ? data : config;
+
+		if (config.apiKey == '')
+			displayErrorMessage('You need a YouTube API key in order to use this application!');
 		
 		typeof callback === 'function' && callback();
 	});

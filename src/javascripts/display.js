@@ -290,15 +290,29 @@ function displayHelp() {
 function displaySettings() {
 	let text = `
 		<h5>YouTube API key</h5>
-		<input class="form-control mr-sm-2" type="text" value="${config.apiKey}">
+		<input class="form-control mr-sm-2" id="api-select" type="text" value="${config.apiKey}">
 		<br>
 		<h5>Output directory</h5>
-		<div class="custom-file">
-			<input class="custom-file-input" id="output-select" type="file" webkitdirectory>
-			<label class="custom-file-label" for="output-select">${config.outputPath}</label>
-		</div>
+		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">
 	`;
 	createDialog('show-dialog', 'Settings', text, () => {
+		updateConfig('apiKey', $('#api-select').val());
 
+		let path = $('#out-select').val();
+		fs.access(path, err => {
+			if (err)
+				createDialog('show-dialog', 'Error', 'This directory does not exist!', undefined, true);
+			else
+				updateConfig('outputPath', path.endsWith('/') ? path : path + '/');
+		});
 	}, true);
+}
+
+/**
+ * Displays an error message in the navbar.
+ * 
+ * @param {string} msg The error message.
+ */
+function displayErrorMessage(msg) {
+	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
 }

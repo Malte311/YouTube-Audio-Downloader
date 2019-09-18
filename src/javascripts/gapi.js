@@ -87,6 +87,9 @@ function sendApiRequest(method, url, callback) {
 	xmlHttp.addEventListener('load', event => {
 		if (xmlHttp.status >= 200 && xmlHttp.status < 300)
 			callback(xmlHttp.responseText);
+
+		if (xmlHttp.status >= 400)
+			createDialog('show-dialog', 'Error', 'Your API key is not valid!', undefined, true);
 	});
 
 	xmlHttp.send();
