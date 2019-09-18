@@ -26,6 +26,11 @@ const request = require('request');
  */
 const { remote } = require('electron');
 
+/**
+ * For comparing versions.
+ */
+const compareVersions = require('compare-versions');
+
 (function(){
 	let options =  {
         url: REPO_URL,
@@ -36,14 +41,12 @@ const { remote } = require('electron');
 	
 	request(options, (err, response, body) => {
 
-		let package = JSON.parse(new Buffer(JSON.parse(body).content, 'base64').toString('ascii'));
+		let pckg = JSON.parse(new Buffer(JSON.parse(body).content, 'base64').toString('ascii'));
 
-		console.log(remote.app.getVersion(), package.version);
-
-		if (false) {
+		if (compareVersions(remote.app.getVersion(), pckg.version) < 0) {
 			let msg = 'There is a new version for this application available! Download it now?';
 			createDialog('show-dialog', 'New version available', msg, () => {
-				electron.shell.openExternal(LATEST_RELEASE);
+				remote.shell.openExternal(LATEST_RELEASE);
 			});
 		}
 	});

@@ -26,6 +26,7 @@
     "npm": "^6.10.3"
   },
   "dependencies": {
+    "compare-versions": "^3.5.1",
     "electron-is-running-in-asar": "^1.0.0",
     "electron-json-storage": "^4.1.7",
     "ytdl-core": "^0.29.7"
