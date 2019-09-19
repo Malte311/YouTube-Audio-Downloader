@@ -7,6 +7,11 @@
  */
 
 /**
+ * For getting the path separator correctly (differs between different operating systems).
+ */
+const path = require('path')
+
+/**
  * Adds a card content container for a channel to a given element.
  * 
  * @param {string} parentId The id of the element where the card should be inserted.
@@ -324,12 +329,12 @@ function displaySettings() {
 		else
 			displayErrorMessage('You need a YouTube API key in order to use this application!');
 
-		let path = $('#out-select').val();
-		fs.access(path, err => {
+		let inputPath = $('#out-select').val();
+		fs.access(inputPath, err => {
 			if (err)
 				createDialog('show-dialog', 'Error', 'This directory does not exist!', undefined, true);
 			else
-				updateConfig('outputPath', path.endsWith('/') ? path : path + '/');
+				updateConfig('outputPath', inputPath.endsWith(path.sep) ? inputPath : inputPath + path.sep);
 		});
 	}, true);
 }
