@@ -99,7 +99,7 @@ function addChannel(channelId, channelImg, channelTitle, callback) {
  * @param {function} callback Callback containing the start time for the channel as a parameter.
  */
 function confirmAddChannel(channelId, channelTitle, callback) {
-	let dialogText = `Select a starting point (exclusive) for the channel "${channelTitle}".
+	let dialogText = `Select a starting point (inclusive) for the channel "${channelTitle}".
 		You can continue without selecting a starting point. In this case, the oldest video will
 		be the starting point.<br>`;
 	

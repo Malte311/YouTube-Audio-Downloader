@@ -45,19 +45,19 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 		let first = true, finished = false;
 		let oldStartTime = myChannels.find(c => c.channelId == channelId).startTime;
 		for (const item of response.items) {
-			let newStartTime = new Date(item.snippet.publishedAt).getTime();
+			let publishTime = new Date(item.snippet.publishedAt).getTime();
 			if (first) { // Videos are sorted by release date: First video is the newest
-				setChannelProperty(channelId, 'startTime', newStartTime);
+				var newStartTime = publishTime;
 				first = false;
 			}
 
-			if (newStartTime <= oldStartTime) {
+			if (publishTime < oldStartTime) {
 				finished = true;
 				break;
 			}
 
 			queue.push({
-				videoLink: `https://www.youtube.com/watch/?v=${item.id.videoId}`,
+				videoLink: `https://www.youtube.com/watch?v=${item.id.videoId}`,
 				videoTitle: item.snippet.title
 			});
 		}
@@ -76,7 +76,9 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 			asyncArrLoop(queue, (vid, callback) => {
 				let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
 				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
-			}, 0);
+			}, 0, () => {
+				setChannelProperty(channelId, 'startTime', newStartTime);
+			});
 		}
 	}, nextPage);
 }
@@ -93,7 +95,7 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
  */
 function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
 	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
-		createDialog('show-dialog', 'Invalid URL', 'This is not a valid YouTube URL!', undefined, true);
+		createDialog('show-dialog', 'Invalid URL', `${url} is not a valid YouTube URL!`, undefined, true);
 		toggleDownloadButtons();
 		return;
 	}
