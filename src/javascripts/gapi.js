@@ -91,6 +91,7 @@ function sendApiRequest(method, url, callback) {
 		if (xmlHttp.status >= 400) {
 			let msg = 'Either your API key is not valid or your quota is exceeded!';
 			createDialog('show-dialog', 'Error', msg, undefined, true);
+			enableDownloadButtons();
 		}
 	});
 

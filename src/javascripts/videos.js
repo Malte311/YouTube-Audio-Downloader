@@ -126,7 +126,7 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		video.pipe(fs.createWriteStream(`${config.outputPath}${config.autoNumber} - ${title}.mp3`));
 
 		let $divId = multi ? 'dl-progress' : 'dl-progress-single';
-		video.on('progress', (packetLen, done, total) => {
+		video.on('progress', (chunkLen, done, total) => {
 			let progress = Math.round((done / total) * 100);
 			displayDownloadProgress($divId, current, totalDls, progress, chTitle);
 		});
@@ -145,6 +145,20 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 
 				typeof callback === 'function' && callback();
 			});
+		});
+
+		video.on('error', err => {
+			let msg = `Could not download <a href="${url}">${url}</a>. 
+					Wrote log to <code>${config.outputPath}error.txt</code>.`;
+			createDialog('show-dialog', 'Error', msg, undefined, true);
+
+			fs.appendFileSync(config.outputPath + 'error.txt', `${url}\r\n`, 'utf8');
+			if (current == totalDls) { // All downloads completed
+				displayDownloadsComplete($divId);
+				enableDownloadButtons(); // New downloads can be started now
+			}
+
+			typeof callback === 'function' && callback();
 		});
 	}
 }
