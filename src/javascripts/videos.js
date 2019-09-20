@@ -20,12 +20,20 @@ const fs = require('fs');
  * Downloads all new videos.
  */
 function downloadAllVideos() {
-	for (const channel of myChannels)
-		downloadVideosFromChannel(channel.channelId, parseInt(channel.startTime));
-
-	if (!myChannels.length) {
+	if (myChannels.length) {
+		asyncArrLoop(myChannels, (channel, inCallback) => {
+			let startTime = channel.startTime != undefined ? parseInt(channel.startTime) : undefined;
+			downloadVideosFromChannel(channel.channelId, startTime, [], '', inCallback, true);
+		}, 0, () => {
+			if (!$('#dl-progress:contains("No new videos available!")').length > 0) {
+				displayDownloadsComplete('dl-progress');
+			}
+			
+			enableDownloadButtons();
+		});
+	} else {
 		createDialog('show-dialog', 'Error', 'You have no channels added yet!', undefined, true);
-		toggleDownloadButtons();
+		enableDownloadButtons();
 	}
 }
 
@@ -33,21 +41,24 @@ function downloadAllVideos() {
  * Downloads all new videos for a specific channel.
  * 
  * @param {string} channelId The id of the channel for which we want to download the videos.
- * @param {number} startTime The start time for new videos. Can also be undefined, which means
+ * @param {number} [startTime] The start time for new videos. Can also be undefined, which means
  * that all videos are new.
  * @param {object[]} [queue] Queue containing all videos to download.
  * @param {string} [nextPage] The token for the next page of the search results.
+ * @param {function} [callback] Callback function
+ * @param {bool} [multi] Specifies if we download videos for multiple channels or not.
  */
-function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = '') {
+function downloadVideosFromChannel(channelId, startTime = undefined, queue = [], nextPage = '', callback, multi = false) {
 	getVideos(channelId, startTime, response => {
 		response = JSON.parse(response);
 
 		let first = true, finished = false;
 		let oldStartTime = myChannels.find(c => c.channelId == channelId).startTime;
+		let newStartTime = oldStartTime;
 		for (const item of response.items) {
 			let publishTime = new Date(item.snippet.publishedAt).getTime();
 			if (first) { // Videos are sorted by release date: First video is the newest
-				var newStartTime = publishTime;
+				newStartTime = publishTime;
 				first = false;
 			}
 
@@ -63,13 +74,14 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 		}
 
 		if (response.nextPageToken && !finished) {
-			downloadVideosFromChannel(channelId, startTime, queue, response.nextPageToken);
+			downloadVideosFromChannel(channelId, startTime, queue, response.nextPageToken, callback, multi);
 		} else {
 			let totalDls = queue.length;
-			if (!totalDls) { // No downloads at all
+			if (!totalDls && !multi) { // No downloads at all
 				displayNoNewVideosMessage();
-				toggleDownloadButtons();
-				return;
+				enableDownloadButtons();
+			} else if (!totalDls) {
+				displayNoNewVideosMessage();
 			}
 				
 			let curr = 0;
@@ -77,7 +89,8 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
 				let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
 				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
 			}, 0, () => {
-				setChannelProperty(channelId, 'startTime', newStartTime);
+				setChannelProperty(channelId, 'startTime', newStartTime + 1);
+				typeof callback === 'function' && callback();
 			});
 		}
 	}, nextPage);
@@ -92,24 +105,27 @@ function downloadVideosFromChannel(channelId, startTime, queue = [], nextPage = 
  * @param {string} [title] The title for the video.
  * @param {string} [chTitle] The title of the channel from which we are currently downloading.
  * @param {function} [callback] Callback which is called when the download is completed.
+ * @param {bool} [multi] Specifies if there are multiple downloads.
  */
-function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback) {
+function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback, multi = true) {
 	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
 		createDialog('show-dialog', 'Invalid URL', `${url} is not a valid YouTube URL!`, undefined, true);
-		toggleDownloadButtons();
+		enableDownloadButtons();
+		typeof callback === 'function' && callback();
 		return;
 	}
 
 	if (title == undefined) {
 		getVideoTitle(url, response => {
 			let newTitle = response != undefined ? response : 'Untitled'; // Avoid endless loops
-			downloadVideo(url, totalDls, current, newTitle, chTitle, callback);
+			downloadVideo(url, totalDls, current, newTitle, chTitle, callback, multi);
 		});
 	} else {
+		title = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 		let video = ytdl(url); // No options here, because it is way faster!
 		video.pipe(fs.createWriteStream(`${config.outputPath}${config.autoNumber} - ${title}.mp3`));
 
-		let $divId = totalDls > 1 ? 'dl-progress' : 'dl-progress-single';
+		let $divId = multi ? 'dl-progress' : 'dl-progress-single';
 		video.on('progress', (packetLen, done, total) => {
 			let progress = Math.round((done / total) * 100);
 			displayDownloadProgress($divId, current, totalDls, progress, chTitle);
@@ -117,13 +133,17 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 
 		video.on('end', () => {
 			let n = (parseInt(config.autoNumber) + 1).toString().padStart(config.autoNumLen, '0');
-			updateConfig('autoNumber', n, () => {
-				typeof callback === 'function' && callback();
+			if (n.length > config.autoNumLen) { // Overflow, start at zero again
+				n = '0'.padStart(config.autoNumLen, '0');
+			}
 
+			updateConfig('autoNumber', n, () => {
 				if (current == totalDls) { // All downloads completed
 					displayDownloadsComplete($divId);
-					toggleDownloadButtons(); // New downloads can be started now
+					enableDownloadButtons(); // New downloads can be started now
 				}
+
+				typeof callback === 'function' && callback();
 			});
 		});
 	}

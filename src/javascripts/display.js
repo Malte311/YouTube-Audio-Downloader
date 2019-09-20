@@ -30,7 +30,7 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
 			<div class="card-body">
 				<h5 class="card-title">${cardTitle}</h5>
 				<button class="btn btn-outline-success dwnld" 
-						onclick="toggleDownloadButtons(); downloadVideosFromChannel('${cardId}')">
+						onclick="disableDownloadButtons(); downloadVideosFromChannel('${cardId}')">
 					Download new videos
 				</button>
 				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
@@ -162,7 +162,7 @@ function displayEmptySearchResults() {
  */
 function displayDownloadProgress(divId, currentNum, totalNum, progress, channelName) {
 	let downloadMessage = channelName != undefined ?
-		`Downloading video ${currentNum} of ${totalNum} from channel ${channelName}...` :
+		`Downloading video ${currentNum} of ${totalNum} from channel "${channelName}"...` :
 		`Downloading video ${currentNum} of ${totalNum}...`;
 	
 		$(`#${divId}`).html(`
@@ -271,10 +271,17 @@ function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
 }
 
 /**
- * Disables all download buttons while downloading and enables them when no downloads are active.
+ * Enables all download buttons.
  */
-function toggleDownloadButtons() {
-	$('.dwnld').prop('disabled', !$('.dwnld').prop('disabled'));
+function enableDownloadButtons() {
+	$('.dwnld').prop('disabled', false);
+}
+
+/**
+ * Disables all download buttons.
+ */
+function disableDownloadButtons() {
+	$('.dwnld').prop('disabled', true);
 }
 
 /**

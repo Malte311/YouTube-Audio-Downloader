@@ -88,8 +88,10 @@ function sendApiRequest(method, url, callback) {
 		if (xmlHttp.status >= 200 && xmlHttp.status < 300)
 			callback(xmlHttp.responseText);
 
-		if (xmlHttp.status >= 400)
-			createDialog('show-dialog', 'Error', 'Your API key is not valid!', undefined, true);
+		if (xmlHttp.status >= 400) {
+			let msg = 'Either your API key is not valid or your quota is exceeded!';
+			createDialog('show-dialog', 'Error', msg, undefined, true);
+		}
 	});
 
 	xmlHttp.send();
