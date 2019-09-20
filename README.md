@@ -1,4 +1,8 @@
 # YouTube-Audio-Downloader
+>
+> Currently in testing phase (spaghetti code and full of bugs :D)! 
+> 
+
 This application allows you to download audio tracks from YouTube videos. Moreover, you can
 add channels which are interesting to you and download all new videos. The application automatically
 keeps track of new videos for you.
