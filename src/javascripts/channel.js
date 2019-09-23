@@ -7,16 +7,6 @@
  */
 
 /**
- * For accessing the local storage.
- */
-const storage = require('electron-json-storage');
-
-/**
- * Holds the ids of all channels which are currently in use.
- */
-var myChannels = [];
-
-/**
  * Loads all channels which are currently in use from the local storage.
  * 
  * @param {function} [callback] Callback which is called after the channels have been loaded.

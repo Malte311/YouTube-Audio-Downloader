@@ -7,11 +7,6 @@
  */
 
 /**
- * Holds the basic url of the Google API.
- */
-const API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
-
-/**
  * Searches for a given user input.
  */
 function search() {

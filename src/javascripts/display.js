@@ -7,11 +7,6 @@
  */
 
 /**
- * For getting the path separator correctly (differs between different operating systems).
- */
-const path = require('path')
-
-/**
  * Adds a card content container for a channel to a given element.
  * 
  * @param {string} parentId The id of the element where the card should be inserted.

@@ -7,16 +7,6 @@
  */
 
 /**
- * For downloading videos in mp3 format.
- */
-const ytdl = require('ytdl-core');
-
-/**
- * For accessing the file system.
- */
-const fs = require('fs');
-
-/**
  * Downloads all new videos.
  */
 function downloadAllVideos() {
