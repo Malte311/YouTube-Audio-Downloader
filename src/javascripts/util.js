@@ -22,7 +22,7 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
 		return;
 	}
 
-	var inCallback = loopFunction; // To avoid name conflict
+	let inCallback = loopFunction; // To avoid name conflict
 	loopFunction(arr[ind], () => {
 		if (++ind < arr.length)
 			asyncArrLoop(arr, inCallback, ind, callback);

@@ -51,7 +51,7 @@ function displayMyChannels() {
 	} else {
 		$('#my-channels').html('');
 		for (const ch of myChannels) {
-			displayChannelCard('my-channels', ch.channelId, ch.channelImg, ch.channelTitle, true);
+			displayChannelCard('my-channels', ch.channelId, ch.channelImg, ch.channelTitle);
 		}
 	}
 }
@@ -63,6 +63,7 @@ function displayMyChannels() {
  * @param {string} channelImg The thumbnail of the newly added channel.
  * @param {string} channelTitle The title of the newly added channel.
  * @param {function} [callback] Callback which is executed after the channel has been added.
+ * Note: If the confirmation gets cancelled, the callback will not be executed.
  */
 function addChannel(channelId, channelImg, channelTitle, callback) {
 	if (!containsChannel(channelId)) {
@@ -154,7 +155,7 @@ function containsChannel(channelId) {
  * @param {any} value The new value for the property.
  */
 function setChannelProperty(channelId, property, value) {
-	var index = myChannels.findIndex(e => e.channelId == channelId);
+	let index = myChannels.findIndex(e => e.channelId == channelId);
 	myChannels[index][property] = value;
 	saveMyChannels();
 }

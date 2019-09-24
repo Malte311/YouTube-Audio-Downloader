@@ -7,33 +7,133 @@
  */
 
 /**
+ * Enables all download buttons.
+ */
+function enableDownloadButtons() {
+	$('.dwnld').prop('disabled', false);
+}
+
+/**
+ * Disables all download buttons.
+ */
+function disableDownloadButtons() {
+	$('.dwnld').prop('disabled', true);
+}
+
+/**
+ * Displays an error message in the navbar.
+ * 
+ * @param {string} msg The error message.
+ */
+function displayErrorMessage(msg) {
+	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
+}
+
+/**
+ * Removes the error message from the navbar.
+ */
+function removeErrorMessage() {
+	$('#error-msg').html('');
+}
+
+/**
+ * Displays an alert in a given element.
+ * 
+ * @param {string} id The id of the element in which the alert should be displayed.
+ * @param {string} text The text for the alert.
+ */
+function displayAlert(id, text, color = 'primary') {
+	$(`#${id}`).html(`
+		<div class="alert alert-${color}" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			${text}
+	  	</div>
+	`);
+}
+
+/**
+ * Displays a message that all downloads have been completed.
+ * 
+ * @param {string} divId The id of the div in which the progress should be displayed.
+ */
+function displayDownloadsComplete(divId) {
+	displayAlert(divId, 'All downloads have been completed!', 'success');
+}
+
+/**
+ * Displays a message that no channels are currently in use.
+ */
+function displayEmptyChannelList() {
+	displayAlert('my-channels', 'You have no channels added to your list yet!', 'danger');
+}
+
+/**
+ * Displays a message that no results for the query were found.
+ */
+function displayEmptySearchResults() {
+	displayAlert('search-results', 'No results found.', 'danger');
+}
+
+/**
+ * Displays a message which says that there are no new videos available.
+ */
+function displayNoNewVideosMessage() {
+	displayAlert('dl-progress', 'No new videos available!', 'danger');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Displays a card (content container) with the given information.
+ * 
+ * @param {string} parentId The id of the parent element to which the card should be appended.
+ * @param {string} cardId The id of the card.
+ * @param {string} cardImg The image path for the card.
+ * @param {string} [cardTitle] The title for the card.
+ * @param {string} [cardText] The text for the card.
+ */
+function displayCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	$(`#${parentId}`).append(`
+		<div class="card" id="${cardId}" style="width: 14rem; margin-left: 5px; margin-right: 5px;">
+			<img src="${cardImg}" class="card-img-top">
+			<div class="card-body">
+				${cardTitle != undefined ? `<h5 class="card-title">${cardTitle}</h5>` : ''}
+				${cardText != undefined ? `<p class="card-text">${cardText}</p>` : ''}
+			</div>
+		</div>
+	`);
+}
+
+/**
  * Adds a card content container for a channel to a given element.
  * 
  * @param {string} parentId The id of the element where the card should be inserted.
  * @param {string} cardId The id of the new card.
  * @param {string} cardImg The path to the image inside the card.
  * @param {string} cardTitle The title of the card.
- * @param {bool} append Specifies whether the card should be appended to the parent element or not.
  */
-function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
-	if (!append)
-		$(`#${parentId}`).html('');
-	
-	$(`#${parentId}`).append(`
-		<div class="card" id="${cardId}" style="width: 20rem; margin-right: 10px;">
-			<img src="${cardImg}" class="card-img-top">
-			<div class="card-body">
-				<h5 class="card-title">${cardTitle}</h5>
-				<button class="btn btn-outline-success dwnld" 
-						onclick="disableDownloadButtons(); downloadVideosFromChannel('${cardId}')">
-					Download new videos
-				</button>
-				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
-					Remove
-				</button>
-			</div>
-		</div>
-	`);
+function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
+	let cardText =
+		`<button class="btn btn-outline-success dwnld" style="margin-bottom: 10px;"
+				onclick="disableDownloadButtons(); downloadVideosFromChannel('${cardId}')">
+			Download new videos
+		</button>
+		<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
+			Remove
+		</button>`;
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
 
 /**
@@ -44,14 +144,12 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
  * @param {string} cardImg The path to the image inside the card.
  * @param {string} cardTitle The title of the card.
  * @param {string} cardText The text of the card.
- * @param {bool} append Specifies whether the card should be appended to the parent element or not.
  */
-function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText, append) {
-	if (!append)
-		$(`#${parentId}`).html('');
+function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	//displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 	
 	$(`#${parentId}`).append(`
-		<div class="card my-auto" id="${cardId}" style="width:18rem; height:550px;
+		<div class="card my-auto" id="${cardId}" style="width:18rem;
 				display:inline-block; margin-right:10px; margin-bottom:15px;">
 			<img src="${cardImg}" class="card-img-top" width="240px" height="240px">
 			<div class="card-body">
@@ -92,19 +190,11 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
  * @param {string} startTime The start time for this specific card.
  */
 function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) {
-	$(`#${parentId}`).append(`
-		<div class="card border-success my-auto" id="${channelId}" style="width:240px; height:350px;
-				display:inline-block; margin-right:15px;">
-			<img src="${cardImg}" class="card-img-top" width="128px" height="128px">
-			<div class="card-body">
-				<p class="card-text">${cardTitle}</p>
-				<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
-						onclick="setStartTime(this, '${startTime}')">
-					Set as start
-				</button>
-			</div>
-		</div>
-	`);
+	let cardText = `<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
+							onclick="setStartTime(this, '${startTime}')">
+						Set as start
+					</button>`;
+	displayCard(parentId, channelId, cardImg, cardTitle, cardText);
 }
 
 /**
@@ -122,29 +212,9 @@ function setStartTime(elem, time) {
 	$(elem).prop('disabled', true);
 }
 
-/**
- * Displays a message that no channels are currently in use.
- */
-function displayEmptyChannelList() {
-	$('#my-channels').html(`
-		<div class="alert alert-primary" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			You have no channels added to your list yet!
-	  	</div>
-	`);
-}
 
-/**
- * Displays a message that no results for the query were found.
- */
-function displayEmptySearchResults() {
-	$('#search-results').html(`
-		<div class="alert alert-primary" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			No results found.
-	  	</div>
-	`);
-}
+
+
 
 /**
  * Displays the download progress.
@@ -172,31 +242,7 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress, channelN
 	`);
 }
 
-/**
- * Displays a message which says that there are no new videos available.
- */
-function displayNoNewVideosMessage() {
-	$('#dl-progress').html(`
-		<div class="alert alert-danger" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			No new videos available!
-		</div>
-	`);
-}
 
-/**
- * Displays a message that all downloads have been completed.
- * 
- * @param {string} divId The id of the div in which the progress should be displayed.
- */
-function displayDownloadsComplete(divId) {
-	$(`#${divId}`).html(`
-		<div class="alert alert-success" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			All downloads have been completed!
-		</div>
-	`);
-}
 
 /**
  * Creates a preview for a given channel such that the user can choose a starting point.
@@ -266,50 +312,10 @@ function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
 }
 
 /**
- * Enables all download buttons.
- */
-function enableDownloadButtons() {
-	$('.dwnld').prop('disabled', false);
-}
-
-/**
- * Disables all download buttons.
- */
-function disableDownloadButtons() {
-	$('.dwnld').prop('disabled', true);
-}
-
-/**
  * Displays the help dialog.
  */
 function displayHelp() {
-	let text = `In order to use this application, you need a YouTube API key.
-	You can get a key by following this steps:
-	<ul>
-		<li> Create a Google account in case you have no account yet. </li>
-		<li>
-			Go to
-			<a href="https://console.developers.google.com/">
-				https://console.developers.google.com/
-			</a>
-			and create a new project.
-		</li>
-		<li> Click on 'Activate API' and add the <em>YouTube Data API v3</em>. </li>
-		<li> Navigate to 'Credentials' and choose 'Create credentials' -> 'API key'. </li>
-	</ul>
-	This application stores your API key only on your computer after you typed it in.
-	You should not expose your API key to the public.<br>
-	After you added an API key via the 'settings' button in this application, you are ready to go.
-	Simply search for the channel you want to add in the 'Add channel' section. Then add this
-	channel to your channel list. When you click on the 'Add channel' button, you have to choose
-	a starting point for that channel. This means you have to choose from which video on you would
-	like to download the videos of this channel. If you want all videos, simply continue without
-	selecting a starting point. Now that you have a non-empty channel list, you can download the
-	new videos for each channel (or even for all channels at once) by clicking on the corresponding
-	button.<br>
-	Of course, you can also download single videos. Just copy the full video URL into the proper
-	search field and click on 'Download'.`;
-	createDialog('show-dialog', 'Help', text, undefined, true);
+	createDialog('show-dialog', 'Help', TEXT['helpDialog'], undefined, true);
 }
 
 /**
@@ -339,20 +345,4 @@ function displaySettings() {
 				updateConfig('outputPath', inputPath.endsWith(path.sep) ? inputPath : inputPath + path.sep);
 		});
 	}, true);
-}
-
-/**
- * Displays an error message in the navbar.
- * 
- * @param {string} msg The error message.
- */
-function displayErrorMessage(msg) {
-	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
-}
-
-/**
- * Removes the error message from the navbar.
- */
-function removeErrorMessage() {
-	$('#error-msg').html('');
 }
