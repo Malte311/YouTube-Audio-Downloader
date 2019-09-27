@@ -1,3 +1,4 @@
+// Could not figure out how to load a plain .html file, so this is a .js file instead.
 module.exports = {
 	"helpDialog": `
 		In order to use this application, you need a YouTube API key.

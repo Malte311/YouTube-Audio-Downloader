@@ -51,12 +51,6 @@ function displayAlert(id, text, color = 'primary') {
 	`);
 }
 
-
-
-
-
-
-
 /**
  * Displays a card (content container) with the given information.
  * 
@@ -99,50 +93,6 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
 }
 
 /**
- * Displays the search results whenever a search is done.
- * 
- * @param {string} parentId The id of the element where the card should be inserted.
- * @param {string} cardId The id of the new card (which is also the channel id).
- * @param {string} cardImg The path to the image inside the card.
- * @param {string} cardTitle The title of the card.
- * @param {string} cardText The text of the card.
- */
-function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
-	//displayCard(parentId, cardId, cardImg, cardTitle, cardText);
-	
-	$(`#${parentId}`).append(`
-		<div class="card my-auto" id="${cardId}" style="width:18rem;
-				display:inline-block; margin-right:10px; margin-bottom:15px;">
-			<img src="${cardImg}" class="card-img-top" width="240px" height="240px">
-			<div class="card-body">
-				<h5 class="card-title">${cardTitle}</h5>
-				<p class="card-text">${cardText}</p>
-				<div id="${cardId}-div"></div>
-			</div>
-		</div>
-	`);
-
-	let btnText, _class, props, onclick, style = 'position: absolute; bottom: 15px;';
-	if (containsChannel(cardId)) {
-		btnText = 'Already added';
-		_class = 'btn btn-outline-secondary';
-		props = 'disabled';
-	} else {
-		btnText = 'Add channel';
-		_class = 'btn btn-outline-success';
-		onclick = () => {
-			addChannel(cardId, cardImg, cardTitle, () => {
-				$(`#${cardId}-btn`).remove();
-				appendButton(`${cardId}-div`, `${cardId}-btn`, 'Already added', undefined,
-						'position:absolute; bottom:15px;', 'btn btn-outline-secondary', 'disabled');
-			});
-		};
-	}
-
-	appendButton(`${cardId}-div`, `${cardId}-btn`, btnText, onclick, style, _class, props);
-}
-
-/**
  * Displays a preview card (when adding a new channel for choosing the starting point).
  * 
  * @param {string} parentId The id of the parent element in which the card should be placed.
@@ -152,31 +102,33 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText)
  * @param {string} startTime The start time for this specific card.
  */
 function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) {
-	let cardText = `<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
-							onclick="setStartTime(this, '${startTime}')">
-						Set as start
-					</button>`;
+	let cardText =
+		`<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
+				onclick="setStartTime(this, '${startTime}')">
+			Set as start
+		</button>`;
 	displayCard(parentId, channelId, cardImg, cardTitle, cardText);
 }
 
 /**
- * Saves the currently selected start time.
+ * Displays the search results whenever a search is done.
  * 
- * @param {object} elem The element which holds the currently selected start time.
- * @param {string} time Start time for this element.
+ * @param {string} parentId The id of the element where the card should be inserted.
+ * @param {string} cardId The id of the new card (which is also the channel id).
+ * @param {string} cardImg The path to the image inside the card.
+ * @param {string} cardTitle The title of the card.
+ * @param {string} cardText The text of the card.
  */
-function setStartTime(elem, time) {
-	$('.start-time').prop('disabled', false);
-	$('.start-time').removeClass('start-time');
+function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	cardText += 
+		`<br>
+		<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+				onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')">
+			Add channel
+		</button>`;
 
-	$(elem).addClass('start-time');
-	$(elem).prop('start-time', time);
-	$(elem).prop('disabled', true);
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
-
-
-
-
 
 /**
  * Displays the download progress.
@@ -192,7 +144,7 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress, channelN
 		`Downloading video ${currentNum} of ${totalNum} from channel "${channelName}"...` :
 		`Downloading video ${currentNum} of ${totalNum}...`;
 	
-		$(`#${divId}`).html(`
+	$(`#${divId}`).html(`
 		<div style="width: 100%;">
 			${downloadMessage}
 		</div>
@@ -203,8 +155,6 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress, channelN
 		</div>
 	`);
 }
-
-
 
 /**
  * Creates a preview for a given channel such that the user can choose a starting point.
@@ -250,47 +200,24 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 }
 
 /**
- * Appends a button to a given parent element.
- * 
- * @param {string} divId The id of the parent element.
- * @param {string} btnId The id of the new button.
- * @param {string} btnText The text of the new button.
- * @param {function} [onclick] The onclick event for the new button.
- * @param {string} [style] The style for the button.
- * @param {string} [_class] The class for the button.
- * @param {string} [props] Additional properties for the button.
- */
-function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
-	style = style || 'margin-top: 10px; margin-right: 10px;';
-	_class = _class || 'btn btn-outline-success';
-	props = props || '';
-	$(`#${divId}`).append(`
-		<button class="${_class}" id="${btnId}" style="${style}" ${props}>
-			${btnText}
-		</button>
-	`);
-
-	typeof onclick === 'function' && $(`#${btnId}`).click(onclick);
-}
-
-/**
  * Displays the help dialog.
  */
 function displayHelp() {
-	createDialog('show-dialog', 'Help', TEXT['helpDialog'], undefined, true);
+	let helpText = require('../html/help.html.js');
+	createDialog('show-dialog', 'Help', helpText['helpDialog'], undefined, true);
 }
 
 /**
  * Displays the settings dialog.
  */
 function displaySettings() {
-	let text = `
-		<h5>YouTube API key</h5>
+	let text =
+		`<h5>YouTube API key</h5>
 		<input class="form-control mr-sm-2" id="api-select" type="text" value="${config.apiKey}">
 		<br>
 		<h5>Output directory</h5>
-		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">
-	`;
+		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">`;
+	
 	createDialog('show-dialog', 'Settings', text, () => {
 		updateConfig('apiKey', $('#api-select').val());
 
@@ -307,4 +234,36 @@ function displaySettings() {
 				updateConfig('outputPath', inputPath.endsWith(path.sep) ? inputPath : inputPath + path.sep);
 		});
 	}, true);
+}
+
+/**
+ * Saves the currently selected start time.
+ * 
+ * @param {object} elem The element which holds the currently selected start time.
+ * @param {string} time Start time for this element.
+ */
+function setStartTime(elem, time) {
+	$('.start-time').prop('disabled', false);
+	$('.start-time').removeClass('start-time');
+
+	$(elem).addClass('start-time');
+	$(elem).prop('start-time', time);
+	$(elem).prop('disabled', true);
+}
+
+/**
+ * Appends a button to a given parent element.
+ * 
+ * @param {string} divId The id of the parent element.
+ * @param {string} btnText The text of the new button.
+ * @param {function} [onclick] The onclick event for the new button.
+ */
+function appendButton(divId, btnText, onclick) {
+	$(`#${divId}`).append(`
+		<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;">
+			${btnText}
+		</button>
+	`);
+
+	typeof onclick === 'function' && $(`#${btnId}`).click(onclick);
 }

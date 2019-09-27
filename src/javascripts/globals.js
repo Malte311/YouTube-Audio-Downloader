@@ -62,11 +62,6 @@ const LATEST_RELEASE = "https://github.com/malte311/YouTube-Audio-Downloader/rel
 const REPO_URL = "https://api.github.com/repos/Malte311/YouTube-Audio-Downloader/contents/package.json";
 
 /**
- * Holds all texts for the application.
- */
-const TEXT = require('../../res/text.json.js');
-
-/**
  * Holds the ids of all channels which are currently in use.
  */
 var myChannels = [];
