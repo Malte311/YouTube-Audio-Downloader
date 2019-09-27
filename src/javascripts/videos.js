@@ -16,7 +16,7 @@ function downloadAllVideos() {
 			downloadVideosFromChannel(channel.channelId, startTime, [], '', inCallback, true);
 		}, 0, () => {
 			if (!$('#dl-progress:contains("No new videos available!")').length > 0) {
-				displayDownloadsComplete('dl-progress');
+				displayAlert('dl-progress', 'All downloads have been completed!', 'success');
 			}
 			
 			enableDownloadButtons();
@@ -68,10 +68,10 @@ function downloadVideosFromChannel(channelId, startTime = undefined, queue = [],
 		} else {
 			let totalDls = queue.length;
 			if (!totalDls && !multi) { // No downloads at all
-				displayNoNewVideosMessage();
+				displayAlert('dl-progress', 'No new videos available!', 'danger');
 				enableDownloadButtons();
 			} else if (!totalDls) {
-				displayNoNewVideosMessage();
+				displayAlert('dl-progress', 'No new videos available!', 'danger');
 			}
 				
 			let curr = 0;
@@ -129,7 +129,7 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 
 			updateConfig('autoNumber', n, () => {
 				if (current == totalDls) { // All downloads completed
-					displayDownloadsComplete($divId);
+					displayAlert($divId, 'All downloads have been completed!', 'success');
 					enableDownloadButtons(); // New downloads can be started now
 				}
 
@@ -144,7 +144,7 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 
 			fs.appendFileSync(config.outputPath + 'error.txt', `${url}\r\n`, 'utf8');
 			if (current == totalDls) { // All downloads completed
-				displayDownloadsComplete($divId);
+				displayAlert($divId, 'All downloads have been completed!', 'success');
 				enableDownloadButtons(); // New downloads can be started now
 			}
 

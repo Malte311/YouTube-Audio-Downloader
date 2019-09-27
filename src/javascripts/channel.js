@@ -47,7 +47,7 @@ function saveMyChannels(callback) {
  */
 function displayMyChannels() {
 	if (!myChannels.length) {
-		displayEmptyChannelList();
+		displayAlert('my-channels', 'You have no channels added to your list yet!', 'danger');
 	} else {
 		$('#my-channels').html('');
 		for (const ch of myChannels) {

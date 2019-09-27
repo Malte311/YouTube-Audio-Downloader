@@ -27,7 +27,7 @@ function search() {
 		}
 
 		if (!items.length)
-			displayEmptySearchResults();
+			displayAlert('search-results', 'No results found.', 'danger');
 	});
 }
 

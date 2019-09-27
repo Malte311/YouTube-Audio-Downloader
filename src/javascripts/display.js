@@ -51,44 +51,6 @@ function displayAlert(id, text, color = 'primary') {
 	`);
 }
 
-/**
- * Displays a message that all downloads have been completed.
- * 
- * @param {string} divId The id of the div in which the progress should be displayed.
- */
-function displayDownloadsComplete(divId) {
-	displayAlert(divId, 'All downloads have been completed!', 'success');
-}
-
-/**
- * Displays a message that no channels are currently in use.
- */
-function displayEmptyChannelList() {
-	displayAlert('my-channels', 'You have no channels added to your list yet!', 'danger');
-}
-
-/**
- * Displays a message that no results for the query were found.
- */
-function displayEmptySearchResults() {
-	displayAlert('search-results', 'No results found.', 'danger');
-}
-
-/**
- * Displays a message which says that there are no new videos available.
- */
-function displayNoNewVideosMessage() {
-	displayAlert('dl-progress', 'No new videos available!', 'danger');
-}
-
-
-
-
-
-
-
-
-
 
 
 
