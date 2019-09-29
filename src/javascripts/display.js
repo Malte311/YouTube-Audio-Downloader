@@ -89,6 +89,7 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
 		<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
 			Remove
 		</button>`;
+	
 	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
 
@@ -102,12 +103,16 @@ function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
  * @param {string} startTime The start time for this specific card.
  */
 function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) {
-	let cardText =
-		`<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
-				onclick="setStartTime(this, '${startTime}')">
-			Set as start
-		</button>`;
-	displayCard(parentId, channelId, cardImg, cardTitle, cardText);
+	let cardText = cardTitle +
+		`<br>
+		<div style="justify-content: flex-end; display: flex;">
+			<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="setStartTime(this, '${startTime}')">
+				Set as start
+			</button>
+		</div>`;
+	
+	displayCard(parentId, channelId, cardImg, '', cardText);
 }
 
 /**
@@ -122,10 +127,12 @@ function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) 
 function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
 	cardText += 
 		`<br>
-		<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
-				onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')">
-			Add channel
-		</button>`;
+		<div style="justify-content: flex-end; display: flex;">
+			<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')">
+				Add channel
+			</button>
+		</div>`;
 
 	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
@@ -182,17 +189,23 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 		}
 
 		// For navigating between pages
-		$('card-prev').append('<br>');
+		$('#card-prev').append('<br>');
 		if (response.prevPageToken) {
-			appendButton('card-prev', 'prev-btn', 'Previous page', () => {
-				createChannelPreview(divId, channelId, response.prevPageToken);
-			});
+			$('#card-prev').append(`
+				<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.prevPageToken}')">
+					Previous page
+				</button>
+			`);
 		}
 
 		if (response.nextPageToken) {
-			appendButton('card-prev', 'next-btn', 'Next page', () => {
-				createChannelPreview(divId, channelId, response.nextPageToken);
-			});
+			$('#card-prev').append(`
+				<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.nextPageToken}')">
+					Next page
+				</button>
+			`);
 		}
 
 		$(`#${divId}`).append('</div>');
@@ -249,21 +262,4 @@ function setStartTime(elem, time) {
 	$(elem).addClass('start-time');
 	$(elem).prop('start-time', time);
 	$(elem).prop('disabled', true);
-}
-
-/**
- * Appends a button to a given parent element.
- * 
- * @param {string} divId The id of the parent element.
- * @param {string} btnText The text of the new button.
- * @param {function} [onclick] The onclick event for the new button.
- */
-function appendButton(divId, btnText, onclick) {
-	$(`#${divId}`).append(`
-		<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;">
-			${btnText}
-		</button>
-	`);
-
-	typeof onclick === 'function' && $(`#${btnId}`).click(onclick);
 }
