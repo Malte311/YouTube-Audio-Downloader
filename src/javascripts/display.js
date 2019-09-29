@@ -192,7 +192,7 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 		$('#card-prev').append('<br>');
 		if (response.prevPageToken) {
 			$('#card-prev').append(`
-				<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;"
+				<button class="btn btn-outline-success" style="margin-right: 5px; margin-top: 15px;"
 						onclick="createChannelPreview('${divId}', '${channelId}', '${response.prevPageToken}')">
 					Previous page
 				</button>
@@ -201,7 +201,7 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 
 		if (response.nextPageToken) {
 			$('#card-prev').append(`
-				<button class="btn btn-outline-success" style="margin-top: 10px; margin-right: 10px;"
+				<button class="btn btn-outline-success"style="margin-top: 15px;"
 						onclick="createChannelPreview('${divId}', '${channelId}', '${response.nextPageToken}')">
 					Next page
 				</button>
@@ -239,12 +239,12 @@ function displaySettings() {
 		else
 			displayErrorMessage('You need a YouTube API key in order to use this application!');
 
-		let inputPath = $('#out-select').val();
-		fs.access(inputPath, err => {
+		let inPath = $('#out-select').val();
+		fs.access(inPath, err => {
 			if (err)
-				createDialog('show-dialog', 'Error', 'This directory does not exist!', undefined, true);
+				createDialog('show-dialog', 'Error', 'Directory does not exist!', undefined, true);
 			else
-				updateConfig('outputPath', inputPath.endsWith(path.sep) ? inputPath : inputPath + path.sep);
+				updateConfig('outputPath', inPath.endsWith(path.sep) ? inPath : inPath + path.sep);
 		});
 	}, true);
 }

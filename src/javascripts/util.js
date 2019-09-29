@@ -66,9 +66,9 @@ function createDialog(divId, title, text, okCallback, noCancel = false) {
 		resizable: false,
 		modal: true,
 		minHeight: 0,
-		minWidth: 800,
-		maxHeight: remote.screen.getPrimaryDisplay().size.height / 2,
-		maxWidth: remote.screen.getPrimaryDisplay().size.width / 2,
+		minWidth: 600,
+		maxHeight: remote.screen.getPrimaryDisplay().size.height / 1.5,
+		maxWidth: 600,
 		title: title,
 		close : () => {
 			$(`#${divId}`).html('');
