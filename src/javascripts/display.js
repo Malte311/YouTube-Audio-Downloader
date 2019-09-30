@@ -83,7 +83,7 @@ function displayCard(parentId, cardId, cardImg, cardTitle, cardText) {
 function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
 	let cardText =
 		`<button class="btn btn-outline-success dwnld" style="margin-bottom: 10px;"
-				onclick="disableDownloadButtons(); downloadVideosFromChannel('${cardId}')">
+				onclick="downloadVideosFromChannel('${cardId}')">
 			Download new videos
 		</button>
 		<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
@@ -225,10 +225,10 @@ function displayHelp() {
  */
 function displaySettings() {
 	let text =
-		`<h5>YouTube API key</h5>
+		`<h5 class="text-success">YouTube API key</h5>
 		<input class="form-control mr-sm-2" id="api-select" type="text" value="${config.apiKey}">
 		<br>
-		<h5>Output directory</h5>
+		<h5 class="text-success">Output directory</h5>
 		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">`;
 	
 	createDialog('show-dialog', 'Settings', text, () => {

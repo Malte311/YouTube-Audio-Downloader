@@ -10,21 +10,17 @@
  * Downloads all new videos.
  */
 function downloadAllVideos() {
-	if (myChannels.length) {
-		asyncArrLoop(myChannels, (channel, inCallback) => {
-			let startTime = channel.startTime != undefined ? parseInt(channel.startTime) : undefined;
-			downloadVideosFromChannel(channel.channelId, startTime, [], '', inCallback, true);
-		}, 0, () => {
-			if (!$('#dl-progress:contains("No new videos available!")').length > 0) {
-				displayAlert('dl-progress', 'All downloads have been completed!', 'success');
-			}
-			
-			enableDownloadButtons();
-		});
-	} else {
-		createDialog('show-dialog', 'Error', 'You have no channels added yet!', undefined, true);
+	disableDownloadButtons();
+
+	asyncArrLoop(myChannels, (channel, inCallback) => {
+		let startTime = channel.startTime != undefined ? parseInt(channel.startTime) : undefined;
+		downloadVideosFromChannel(channel.channelId, startTime, [], '', inCallback, true);
+	}, 0, () => {
 		enableDownloadButtons();
-	}
+		
+		if (!myChannels.length)
+			displayAlert('dl-progress', 'You have no channels added yet!', 'danger');
+	});
 }
 
 /**
@@ -39,6 +35,11 @@ function downloadAllVideos() {
  * @param {bool} [multi] Specifies if we download videos for multiple channels or not.
  */
 function downloadVideosFromChannel(channelId, startTime = undefined, queue = [], nextPage = '', callback, multi = false) {
+	disableDownloadButtons();
+
+	let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
+	displayAlert('dl-progress', `Currently checking channel "${chTitle}"...`, 'info');
+
 	getVideos(channelId, startTime, response => {
 		response = JSON.parse(response);
 
@@ -70,16 +71,17 @@ function downloadVideosFromChannel(channelId, startTime = undefined, queue = [],
 			if (!totalDls && !multi) { // No downloads at all
 				displayAlert('dl-progress', 'No new videos available!', 'danger');
 				enableDownloadButtons();
-			} else if (!totalDls) {
-				displayAlert('dl-progress', 'No new videos available!', 'danger');
 			}
 				
 			let curr = 0;
 			asyncArrLoop(queue, (vid, callback) => {
-				let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
 				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
 			}, 0, () => {
 				setChannelProperty(channelId, 'startTime', newStartTime + 1);
+
+				if (!multi)
+					enableDownloadButtons();
+
 				typeof callback === 'function' && callback();
 			});
 		}
@@ -100,7 +102,6 @@ function downloadVideosFromChannel(channelId, startTime = undefined, queue = [],
 function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback, multi = true) {
 	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
 		createDialog('show-dialog', 'Invalid URL', `${url} is not a valid YouTube URL!`, undefined, true);
-		enableDownloadButtons();
 		typeof callback === 'function' && callback();
 		return;
 	}
@@ -122,43 +123,18 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 
 		video.on('end', () => {
-			let n = (parseInt(config.autoNumber) + 1).toString().padStart(config.autoNumLen, '0');
-			if (n.length > config.autoNumLen) { // Overflow, start at zero again
-				n = '0'.padStart(config.autoNumLen, '0');
-			}
-
-			updateConfig('autoNumber', n, () => {
-				if (current == totalDls) { // All downloads completed
-					displayAlert($divId, 'All downloads have been completed!', 'success');
-					enableDownloadButtons(); // New downloads can be started now
-				}
-
-				typeof callback === 'function' && callback();
-			});
+			displayAlert($divId, 'All downloads have been completed!', 'success');
+			incAutoNumber(callback);
 		});
 
 		video.on('error', err => {
 			let msg = `Could not download <a href="${url}">${url}</a>. 
 					Wrote log to <code>${config.outputPath}error.txt</code>.`;
-			createDialog('show-dialog', 'Error', msg, undefined, true);
+			displayAlert($divId, msg, 'danger');
 
 			fs.appendFileSync(config.outputPath + 'error.txt', `${url}\r\n`, 'utf8');
-			if (current == totalDls) { // All downloads completed
-				displayAlert($divId, 'All downloads have been completed!', 'success');
-				enableDownloadButtons(); // New downloads can be started now
-			}
 
 			typeof callback === 'function' && callback();
 		});
 	}
-}
-
-/**
- * Checks if a given url is a valid YouTube url.
- * 
- * @param {string} url The url which we want to check.
- */
-function isValidUrl(url) {
-	let regex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})?$/;
-	return regex.test(url);
 }
