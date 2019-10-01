@@ -20,6 +20,8 @@ function downloadAllVideos() {
 		
 		if (!myChannels.length)
 			displayAlert('dl-progress', 'You have no channels added yet!', 'danger');
+		else
+			displayAlert('dl-progress', 'All downloads have been completed!', 'success');
 	});
 }
 
@@ -82,6 +84,8 @@ function downloadVideosFromChannel(channelId, startTime = undefined, queue = [],
 				if (!multi)
 					enableDownloadButtons();
 
+				displayAlert('dl-progress', `Downloads for channel "${chTitle}" completed!`, 'success');
+
 				typeof callback === 'function' && callback();
 			});
 		}
@@ -123,7 +127,9 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 
 		video.on('end', () => {
-			displayAlert($divId, 'All downloads have been completed!', 'success');
+			if (!multi)
+				displayAlert($divId, 'Download completed!', 'success');
+			
 			incAutoNumber(callback);
 		});
 
