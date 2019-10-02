@@ -1,7 +1,4 @@
 # YouTube-Audio-Downloader
->
-> Currently in testing phase (spaghetti code and full of bugs :D)! 
-> 
 
 This application allows you to download audio tracks from YouTube videos. Moreover, you can
 add channels which are interesting to you and download all new videos. The application automatically
@@ -14,20 +11,32 @@ Simply download the correct `ZIP`-archive and unzip it.
 
 ***
 ## Usage
-In order to use this application, you need a YouTube API key. You can get a key by following this steps:
+In order to use this application, you need a _YouTube API key_. You can get a key by following this steps:
+
 - Create a Google account in case you have no account yet.
 - Go to https://console.developers.google.com/ and create a new project.
 - Click on 'Activate API' and add the _YouTube Data API v3_.
 - Navigate to 'Credentials' and choose 'Create credentials' -> 'API key'.
-This application stores your API key only on your computer after you typed it in. You should not expose your API key to the public.
 
-After you added an API key via the 'settings' button in this application, you are ready to go. If you want to download a single video,
-you can simply paste the full URL of that video into the search field in the 'Download single video' section and click on 'Download'.
-For downloading multiple videos at once, you have to add channels to your channel list first. Simply search for the channel you want to
-add in the 'Add channel' section. Then add this channel to your channel list. When you click on the 'Add channel' button, you have to
-choose a starting point for that channel. This means you have to choose from which video on you would like to download the videos of
-this channel. If you want all videos, simply continue without selecting a starting point. Now that you have a non-empty channel list,
-you can download the new videos for each channel (or even for all channels at once) by clicking on the corresponding button.
+This application stores your API key **only on your computer** after you typed it in. You should **not** expose your API key to the public.
+After you added an API key via the 'settings' button in this application, you are ready to go.
+
+![Channel list](https://github.com/Malte311/YouTube-Audio-Downloader/blob/master/res/my_channels.png)
+
+For downloading multiple videos at once, you have to add channels to your channel list first.
+Simply search for the channel you want to add in the 'Add channel' section (see below).
+
+![Add channel](https://github.com/Malte311/YouTube-Audio-Downloader/blob/master/res/add_channel.png)
+
+You can use the search formular to search for channels you would like to add.
+When you click on the 'Add channel' button, you have to choose a starting point for that channel.
+This means you have to choose from which video on you would like to download the videos of this channel.
+If you want all videos, simply continue without selecting a starting point.
+
+![Single download](https://github.com/Malte311/YouTube-Audio-Downloader/blob/master/res/single_download.png)
+
+If you want to download a single video, you can simply paste the full URL of that video into the search field in the
+'Download single video' section and click on 'Download'.
 
 ***
 ## Further
