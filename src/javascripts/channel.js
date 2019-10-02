@@ -7,16 +7,6 @@
  */
 
 /**
- * For accessing the local storage.
- */
-const storage = require('electron-json-storage');
-
-/**
- * Holds the ids of all channels which are currently in use.
- */
-var myChannels = [];
-
-/**
  * Loads all channels which are currently in use from the local storage.
  * 
  * @param {function} [callback] Callback which is called after the channels have been loaded.
@@ -57,11 +47,11 @@ function saveMyChannels(callback) {
  */
 function displayMyChannels() {
 	if (!myChannels.length) {
-		displayEmptyChannelList();
+		displayAlert('my-channels', 'You have no channels added to your list yet!', 'danger');
 	} else {
 		$('#my-channels').html('');
 		for (const ch of myChannels) {
-			displayChannelCard('my-channels', ch.channelId, ch.channelImg, ch.channelTitle, true);
+			displayChannelCard('my-channels', ch.channelId, ch.channelImg, ch.channelTitle);
 		}
 	}
 }
@@ -73,6 +63,7 @@ function displayMyChannels() {
  * @param {string} channelImg The thumbnail of the newly added channel.
  * @param {string} channelTitle The title of the newly added channel.
  * @param {function} [callback] Callback which is executed after the channel has been added.
+ * Note: If the confirmation gets cancelled, the callback will not be executed.
  */
 function addChannel(channelId, channelImg, channelTitle, callback) {
 	if (!containsChannel(channelId)) {
@@ -99,7 +90,7 @@ function addChannel(channelId, channelImg, channelTitle, callback) {
  * @param {function} callback Callback containing the start time for the channel as a parameter.
  */
 function confirmAddChannel(channelId, channelTitle, callback) {
-	let dialogText = `Select a starting point (exclusive) for the channel "${channelTitle}".
+	let dialogText = `Select a starting point (inclusive) for the channel "${channelTitle}".
 		You can continue without selecting a starting point. In this case, the oldest video will
 		be the starting point.<br>`;
 	
@@ -164,7 +155,7 @@ function containsChannel(channelId) {
  * @param {any} value The new value for the property.
  */
 function setChannelProperty(channelId, property, value) {
-	var index = myChannels.findIndex(e => e.channelId == channelId);
+	let index = myChannels.findIndex(e => e.channelId == channelId);
 	myChannels[index][property] = value;
 	saveMyChannels();
 }

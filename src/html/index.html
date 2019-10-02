@@ -11,24 +11,25 @@
     <body>
 		<div id="main">
 			<nav class="navbar navbar-light bg-light justify-content-between">
-				<a class="navbar-brand">YouTube-Audio-Downloader</a>
+				<a class="navbar-brand text-primary">YouTube-Audio-Downloader</a>
 				<div id="error-msg"></div>
 				<div>
 					<button class="btn btn-outline-primary my-2 my-sm-0" type="button" onclick="displayHelp()">Help</button>
 					<button class="btn btn-outline-primary my-2 my-sm-0" type="button" onclick="displaySettings()">Settings</button>
 				</div>
 			</nav>
+			<div id="show-dialog"></div>
 			<div style="text-align: center; margin-left:25px;">
-				<h2 style="text-align: center;">My channels</h2>
+				<h2 class="text-success">My channels</h2>
 				<div id="my-channels" class="row justify-content-center align-self-center"></div>
 				<br>
-				<button class="btn btn-outline-success dwnld" onclick="toggleDownloadButtons(); downloadAllVideos();">Download all new videos</button>
+				<button class="btn btn-outline-success dwnld" onclick="downloadAllVideos()">Download all new videos</button>
 				<br>
 				<div id="dl-progress" class="row justify-content-center align-self-center"></div>
 			</div>
 			<hr>
 			<div style="text-align: center; margin-left:25px;">
-				<h2>Add channel</h2>
+				<h2 class="text-success">Add channel</h2>
 				<form class="form-inline" onsubmit="search(); return false;" style="margin: auto; width: 50%; display: inline-block;">
 					<input class="form-control mr-sm-2" type="search" placeholder="Search channel" aria-label="Search" id="search-input" autofocus>
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -39,8 +40,8 @@
 			</div>
 			<hr>
 			<div style="text-align: center; margin-left:25px; margin-bottom:25px;">
-				<h2>Download single video</h2>
-				<form class="form-inline" onsubmit="toggleDownloadButtons(); downloadVideo($('#dl-input').val(), 1, 1); return false;" style="margin: auto; width: 50%; display: inline-block;">
+				<h2 class="text-success">Download single video</h2>
+				<form class="form-inline" onsubmit="downloadVideo($('#dl-input').val(), 1, 1, undefined, undefined, undefined, false); return false;" style="margin: auto; width: 50%; display: inline-block;">
 					<input class="form-control mr-sm-2" type="search" placeholder="Full video URL" aria-label="Search" id="dl-input" autofocus>
 					<button class="btn btn-outline-success my-2 my-sm-0 dwnld" type="submit">Download</button>
 				</form>
@@ -48,11 +49,11 @@
 				<div id="dl-progress-single" class="row justify-content-center align-self-center"></div>
 			</div>
 		</div>
-		<div id="show-dialog"></div>
 	</body>
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 	<script language="javascript" src="../javascripts/jquery.min.js"></script>
 	<script language="javascript" src="../javascripts/jquery-ui.min.js"></script>
+	<script language="javascript" src="../javascripts/globals.js"></script>
 	<script language="javascript" src="../javascripts/channel.js"></script>
 	<script language="javascript" src="../javascripts/display.js"></script>
 	<script language="javascript" src="../javascripts/gapi.js"></script>

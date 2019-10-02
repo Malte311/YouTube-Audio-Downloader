@@ -6,11 +6,6 @@
  * @author Malte311
  */
 
-/**
- * Configuration file.
- */
-var config = require('../javascripts/config.js');
-
 (function() {
 	loadConfig(() => {
 		// Loads the saved channels and displays them afterwards.

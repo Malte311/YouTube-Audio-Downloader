@@ -1,14 +1,14 @@
 {
   "name": "YouTube-Audio-Downloader",
-  "version": "0.0.1",
+  "version": "0.9.4",
   "description": "Download audio tracks from YouTube videos.",
   "main": "./src/javascripts/main.js",
   "scripts": {
     "start": "electron .",
-    "package-mac": "electron-packager ./ YT-Audio-Downloader --ignore=node_modules/wine-darwin --platform=darwin --arch=x64 --asar --icon=./res/icon.icns --prune=true --out=./application/",
+    "package-mac": "electron-packager ./ YT-Audio-Downloader --ignore=node_modules/wine-darwin --platform=darwin --arch=x64 --asar --icon=./res/icon.icns --prune=true --overwrite --out=./application/",
     "create-dmg": "electron-installer-dmg ./application/YT-Audio-Downloader-darwin-x64/YT-Audio-Downloader.app YT-Audio-Downloader-mac-x64",
-    "package-win": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=win32 --arch=x64 --asar --icon=./res/icon.ico --prune=true --out=./application/",
-    "package-linux": "electron-packager ./  --ignore=node_modules/wine-darwin --platform=linux --arch=x64 --asar --icon=./res/icon.png --prune=true --out=./application/"
+    "package-win": "electron-packager ./  --ignore=node_modules/wine-darwin --ignore=YT-Audio-Downloader-mac-x64.dmg --platform=win32 --arch=x64 --asar --icon=./res/icon.ico --prune=true --overwrite --out=./application/",
+    "package-linux": "electron-packager ./  --ignore=node_modules/wine-darwin --ignore=YT-Audio-Downloader-mac-x64.dmg --platform=linux --arch=x64 --asar --icon=./res/icon.png --prune=true --overwrite --out=./application/"
   },
   "repository": "https://github.com/Malte311/YouTube-Audio-Downloader",
   "keywords": [
@@ -23,12 +23,13 @@
     "electron-installer-dmg": "^0.2.1",
     "electron-packager": "^12.2.0",
     "jsdoc": "^3.6.3",
-    "npm": "^6.10.3"
+    "npm": "^6.11.3"
   },
   "dependencies": {
     "compare-versions": "^3.5.1",
     "electron-is-running-in-asar": "^1.0.0",
-    "electron-json-storage": "^4.1.7",
+    "electron-json-storage": "^4.1.8",
+    "request": "^2.88.0",
     "ytdl-core": "^0.29.7"
   }
 }

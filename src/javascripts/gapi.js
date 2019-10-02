@@ -7,33 +7,27 @@
  */
 
 /**
- * Holds the basic url of the Google API.
- */
-const API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
-
-/**
  * Searches for a given user input.
  */
 function search() {
-	var $searchInput = $('#search-input').val();
-	var params = `?part=snippet&maxResults=12&type=channel&q=${$searchInput}&key=${config.apiKey}`;
+	let $searchInput = $('#search-input').val();
+	let params = `?part=snippet&maxResults=12&type=channel&q=${$searchInput}&key=${config.apiKey}`;
 
 	sendApiRequest('GET', API_BASE_URL + '/search' + params, response => {
 		$('#search-results').html('');
-		var items = JSON.parse(response).items;
-		for (var channel of items) {
+		let items = JSON.parse(response).items;
+		for (let channel of items) {
 			displaySearchResultCard(
 				'search-results', 
 				channel.id.channelId, 
 				channel.snippet.thumbnails.medium.url, 
 				channel.snippet.channelTitle, 
-				channel.snippet.description, 
-				true
+				channel.snippet.description
 			);
 		}
 
 		if (!items.length)
-			displayEmptySearchResults();
+			displayAlert('search-results', 'No results found.', 'danger');
 	});
 }
 
@@ -47,7 +41,7 @@ function search() {
  * @param {number} [maxRes] Amount of maximum search results, defaults to 50.
  */
 function getVideos(channelId, startTime, callback, pageToken = '', maxRes = 50) {
-	var params = `?part=snippet&type=video&channelId=${channelId}&maxResults=${maxRes}&order=date`;
+	let params = `?part=snippet&type=video&channelId=${channelId}&maxResults=${maxRes}&order=date`;
 	if (startTime != undefined)
 		params += `&publishedAfter=${new Date(startTime).toISOString()}`;
 
@@ -82,14 +76,17 @@ function getVideoTitle(videoUrl, callback) {
  * @param {function} callback Callback function which receives the response as a parameter.
  */
 function sendApiRequest(method, url, callback) {
-	var xmlHttp = new XMLHttpRequest();
+	let xmlHttp = new XMLHttpRequest();
 	xmlHttp.open(method, url);
 	xmlHttp.addEventListener('load', event => {
 		if (xmlHttp.status >= 200 && xmlHttp.status < 300)
 			callback(xmlHttp.responseText);
 
-		if (xmlHttp.status >= 400)
-			createDialog('show-dialog', 'Error', 'Your API key is not valid!', undefined, true);
+		if (xmlHttp.status >= 400) {
+			let msg = 'Either your API key is not valid or your quota is exceeded!';
+			createDialog('show-dialog', 'Error', msg, undefined, true);
+			enableDownloadButtons();
+		}
 	});
 
 	xmlHttp.send();

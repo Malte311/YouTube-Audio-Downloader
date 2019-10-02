@@ -22,7 +22,7 @@ function asyncArrLoop(arr, loopFunction, ind, callback) {
 		return;
 	}
 
-	var inCallback = loopFunction; // To avoid name conflict
+	let inCallback = loopFunction; // To avoid name conflict
 	loopFunction(arr[ind], () => {
 		if (++ind < arr.length)
 			asyncArrLoop(arr, inCallback, ind, callback);
@@ -67,8 +67,8 @@ function createDialog(divId, title, text, okCallback, noCancel = false) {
 		modal: true,
 		minHeight: 0,
 		minWidth: 600,
-		maxHeight: 600,
-		maxWidth: 1400,
+		maxHeight: remote.screen.getPrimaryDisplay().size.height / 1.5,
+		maxWidth: 600,
 		title: title,
 		close : () => {
 			$(`#${divId}`).html('');
@@ -80,4 +80,29 @@ function createDialog(divId, title, text, okCallback, noCancel = false) {
 
 	$('body').css({overflow: 'hidden'});
 	$('#main').css({'opacity': 0.3});
+}
+
+/**
+ * Checks if a given url is a valid YouTube url.
+ * 
+ * @param {string} url The url which we want to check.
+ */
+function isValidUrl(url) {
+	let regex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})?$/;
+	return regex.test(url);
+}
+
+/**
+ * Increments the number for automatic numbering.
+ * 
+ * @param {function} [callback] Callback which is executed after the auto number has been
+ * incremented.
+ */
+function incAutoNumber(callback) {
+	let newNum = (parseInt(config.autoNumber) + 1).toString().padStart(config.autoNumLen, '0');
+	if (newNum.length > config.autoNumLen) { // Overflow, start at zero again
+		newNum = '0'.padStart(config.autoNumLen, '0');
+	}
+
+	updateConfig('autoNumber', newNum, callback);
 }

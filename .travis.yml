@@ -30,7 +30,7 @@ deploy:
     file:
       - "application/YouTube-Audio-Downloader-win32-x64.zip"
       - "application/YouTube-Audio-Downloader-linux-x64.zip"
-      - "YouTube-Audio-Downloader-mac-x64.dmg"
+      - "YT-Audio-Downloader-mac-x64.dmg"
     skip_cleanup: true
     on:
       tags: true

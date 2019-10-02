@@ -6,31 +6,6 @@
  * @author Malte311
  */
 
-/**
- * Holds the url for the package.json of this repository.
- */
-const REPO_URL = "https://api.github.com/repos/Malte311/YouTube-Audio-Downloader/contents/package.json";
-
-/**
- * Holds the url to the latest release of this application.
- */
-const LATEST_RELEASE = "https://github.com/malte311/YouTube-Audio-Downloader/releases/latest";
-
-/**
- * For sending requests to the github api.
- */
-const request = require('request');
-
-/**
- * For getting the version of this application.
- */
-const { remote } = require('electron');
-
-/**
- * For comparing versions.
- */
-const compareVersions = require('compare-versions');
-
 (function(){
 	let options =  {
         url: REPO_URL,

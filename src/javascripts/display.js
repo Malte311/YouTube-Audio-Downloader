@@ -7,79 +7,90 @@
  */
 
 /**
- * Adds a card content container for a channel to a given element.
- * 
- * @param {string} parentId The id of the element where the card should be inserted.
- * @param {string} cardId The id of the new card.
- * @param {string} cardImg The path to the image inside the card.
- * @param {string} cardTitle The title of the card.
- * @param {bool} append Specifies whether the card should be appended to the parent element or not.
+ * Enables all download buttons.
  */
-function displayChannelCard(parentId, cardId, cardImg, cardTitle, append) {
-	if (!append)
-		$(`#${parentId}`).html('');
-	
+function enableDownloadButtons() {
+	$('.dwnld').prop('disabled', false);
+}
+
+/**
+ * Disables all download buttons.
+ */
+function disableDownloadButtons() {
+	$('.dwnld').prop('disabled', true);
+}
+
+/**
+ * Displays an error message in the navbar.
+ * 
+ * @param {string} msg The error message.
+ */
+function displayErrorMessage(msg) {
+	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
+}
+
+/**
+ * Removes the error message from the navbar.
+ */
+function removeErrorMessage() {
+	$('#error-msg').html('');
+}
+
+/**
+ * Displays an alert in a given element.
+ * 
+ * @param {string} id The id of the element in which the alert should be displayed.
+ * @param {string} text The text for the alert.
+ */
+function displayAlert(id, text, color = 'primary') {
+	$(`#${id}`).html(`
+		<div class="alert alert-${color}" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			${text}
+	  	</div>
+	`);
+}
+
+/**
+ * Displays a card (content container) with the given information.
+ * 
+ * @param {string} parentId The id of the parent element to which the card should be appended.
+ * @param {string} cardId The id of the card.
+ * @param {string} cardImg The image path for the card.
+ * @param {string} [cardTitle] The title for the card.
+ * @param {string} [cardText] The text for the card.
+ */
+function displayCard(parentId, cardId, cardImg, cardTitle, cardText) {
 	$(`#${parentId}`).append(`
-		<div class="card" id="${cardId}" style="width: 20rem; margin-right: 10px;">
+		<div class="card" id="${cardId}" style="width: 14rem; margin-left: 5px; margin-right: 5px;">
 			<img src="${cardImg}" class="card-img-top">
 			<div class="card-body">
-				<h5 class="card-title">${cardTitle}</h5>
-				<button class="btn btn-outline-success dwnld" 
-						onclick="toggleDownloadButtons(); downloadVideosFromChannel('${cardId}')">
-					Download new videos
-				</button>
-				<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
-					Remove
-				</button>
+				${cardTitle != undefined ? `<h5 class="card-title">${cardTitle}</h5>` : ''}
+				${cardText != undefined ? `<p class="card-text">${cardText}</p>` : ''}
 			</div>
 		</div>
 	`);
 }
 
 /**
- * Displays the search results whenever a search is done.
+ * Adds a card content container for a channel to a given element.
  * 
  * @param {string} parentId The id of the element where the card should be inserted.
- * @param {string} cardId The id of the new card (which is also the channel id).
+ * @param {string} cardId The id of the new card.
  * @param {string} cardImg The path to the image inside the card.
  * @param {string} cardTitle The title of the card.
- * @param {string} cardText The text of the card.
- * @param {bool} append Specifies whether the card should be appended to the parent element or not.
  */
-function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText, append) {
-	if (!append)
-		$(`#${parentId}`).html('');
+function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
+	let cardText =
+		`<button class="btn btn-outline-success dwnld" style="margin-bottom: 10px;"
+				onclick="downloadVideosFromChannel('${cardId}')">
+			Download new videos
+		</button>
+		<button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
+			Remove
+		</button>`;
 	
-	$(`#${parentId}`).append(`
-		<div class="card my-auto" id="${cardId}" style="width:18rem; height:550px;
-				display:inline-block; margin-right:10px; margin-bottom:15px;">
-			<img src="${cardImg}" class="card-img-top" width="240px" height="240px">
-			<div class="card-body">
-				<h5 class="card-title">${cardTitle}</h5>
-				<p class="card-text">${cardText}</p>
-				<div id="${cardId}-div"></div>
-			</div>
-		</div>
-	`);
-
-	let btnText, _class, props, onclick, style = 'position: absolute; bottom: 15px;';
-	if (containsChannel(cardId)) {
-		btnText = 'Already added';
-		_class = 'btn btn-outline-secondary';
-		props = 'disabled';
-	} else {
-		btnText = 'Add channel';
-		_class = 'btn btn-outline-success';
-		onclick = () => {
-			addChannel(cardId, cardImg, cardTitle, () => {
-				$(`#${cardId}-btn`).remove();
-				appendButton(`${cardId}-div`, `${cardId}-btn`, 'Already added', undefined,
-						'position:absolute; bottom:15px;', 'btn btn-outline-secondary', 'disabled');
-			});
-		};
-	}
-
-	appendButton(`${cardId}-div`, `${cardId}-btn`, btnText, onclick, style, _class, props);
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
 
 /**
@@ -92,58 +103,38 @@ function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText,
  * @param {string} startTime The start time for this specific card.
  */
 function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) {
-	$(`#${parentId}`).append(`
-		<div class="card border-success my-auto" id="${channelId}" style="width:240px; height:350px;
-				display:inline-block; margin-right:15px;">
-			<img src="${cardImg}" class="card-img-top" width="128px" height="128px">
-			<div class="card-body">
-				<p class="card-text">${cardTitle}</p>
-				<button class="btn btn-outline-success" style="position:absolute; bottom:15px;"
-						onclick="setStartTime(this, '${startTime}')">
-					Set as start
-				</button>
-			</div>
-		</div>
-	`);
+	let cardText = cardTitle +
+		`<br>
+		<div style="justify-content: flex-end; display: flex;">
+			<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="setStartTime(this, '${startTime}')">
+				Set as start
+			</button>
+		</div>`;
+	
+	displayCard(parentId, channelId, cardImg, '', cardText);
 }
 
 /**
- * Saves the currently selected start time.
+ * Displays the search results whenever a search is done.
  * 
- * @param {object} elem The element which holds the currently selected start time.
- * @param {string} time Start time for this element.
+ * @param {string} parentId The id of the element where the card should be inserted.
+ * @param {string} cardId The id of the new card (which is also the channel id).
+ * @param {string} cardImg The path to the image inside the card.
+ * @param {string} cardTitle The title of the card.
+ * @param {string} cardText The text of the card.
  */
-function setStartTime(elem, time) {
-	$('.start-time').prop('disabled', false);
-	$('.start-time').removeClass('start-time');
+function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	cardText += 
+		`<br>
+		<div style="justify-content: flex-end; display: flex;">
+			<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')">
+				Add channel
+			</button>
+		</div>`;
 
-	$(elem).addClass('start-time');
-	$(elem).prop('start-time', time);
-	$(elem).prop('disabled', true);
-}
-
-/**
- * Displays a message that no channels are currently in use.
- */
-function displayEmptyChannelList() {
-	$('#my-channels').html(`
-		<div class="alert alert-primary" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			You have no channels added to your list yet!
-	  	</div>
-	`);
-}
-
-/**
- * Displays a message that no results for the query were found.
- */
-function displayEmptySearchResults() {
-	$('#search-results').html(`
-		<div class="alert alert-primary" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			No results found.
-	  	</div>
-	`);
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
 }
 
 /**
@@ -157,10 +148,10 @@ function displayEmptySearchResults() {
  */
 function displayDownloadProgress(divId, currentNum, totalNum, progress, channelName) {
 	let downloadMessage = channelName != undefined ?
-		`Downloading video ${currentNum} of ${totalNum} from channel ${channelName}...` :
+		`Downloading video ${currentNum} of ${totalNum} from channel "${channelName}"...` :
 		`Downloading video ${currentNum} of ${totalNum}...`;
 	
-		$(`#${divId}`).html(`
+	$(`#${divId}`).html(`
 		<div style="width: 100%;">
 			${downloadMessage}
 		</div>
@@ -168,32 +159,6 @@ function displayDownloadProgress(divId, currentNum, totalNum, progress, channelN
 			<div class="progress-bar progress-bar-striped bg-success" style="width: ${progress}%;">
 				${progress}%
 			</div>
-		</div>
-	`);
-}
-
-/**
- * Displays a message which says that there are no new videos available.
- */
-function displayNoNewVideosMessage() {
-	$('#dl-progress').html(`
-		<div class="alert alert-danger" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			No new videos available!
-		</div>
-	`);
-}
-
-/**
- * Displays a message that all downloads have been completed.
- * 
- * @param {string} divId The id of the div in which the progress should be displayed.
- */
-function displayDownloadsComplete(divId) {
-	$(`#${divId}`).html(`
-		<div class="alert alert-success" role="alert"
-				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
-			All downloads have been completed!
 		</div>
 	`);
 }
@@ -224,17 +189,23 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 		}
 
 		// For navigating between pages
-		$('card-prev').append('<br>');
+		$('#card-prev').append('<br>');
 		if (response.prevPageToken) {
-			appendButton('card-prev', 'prev-btn', 'Previous page', () => {
-				createChannelPreview(divId, channelId, response.prevPageToken);
-			});
+			$('#card-prev').append(`
+				<button class="btn btn-outline-success" style="margin-right: 5px; margin-top: 15px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.prevPageToken}')">
+					Previous page
+				</button>
+			`);
 		}
 
 		if (response.nextPageToken) {
-			appendButton('card-prev', 'next-btn', 'Next page', () => {
-				createChannelPreview(divId, channelId, response.nextPageToken);
-			});
+			$('#card-prev').append(`
+				<button class="btn btn-outline-success"style="margin-top: 15px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.nextPageToken}')">
+					Next page
+				</button>
+			`);
 		}
 
 		$(`#${divId}`).append('</div>');
@@ -242,80 +213,24 @@ function createChannelPreview(divId, channelId, pageToken = '') {
 }
 
 /**
- * Appends a button to a given parent element.
- * 
- * @param {string} divId The id of the parent element.
- * @param {string} btnId The id of the new button.
- * @param {string} btnText The text of the new button.
- * @param {function} [onclick] The onclick event for the new button.
- * @param {string} [style] The style for the button.
- * @param {string} [_class] The class for the button.
- * @param {string} [props] Additional properties for the button.
- */
-function appendButton(divId, btnId, btnText, onclick, style, _class, props) {
-	style = style || 'margin-top: 10px; margin-right: 10px;';
-	_class = _class || 'btn btn-outline-success';
-	props = props || '';
-	$(`#${divId}`).append(`
-		<button class="${_class}" id="${btnId}" style="${style}" ${props}>
-			${btnText}
-		</button>
-	`);
-
-	typeof onclick === 'function' && $(`#${btnId}`).click(onclick);
-}
-
-/**
- * Disables all download buttons while downloading and enables them when no downloads are active.
- */
-function toggleDownloadButtons() {
-	$('.dwnld').prop('disabled', !$('.dwnld').prop('disabled'));
-}
-
-/**
  * Displays the help dialog.
  */
 function displayHelp() {
-	let text = `In order to use this application, you need a YouTube API key.
-	You can get a key by following this steps:
-	<ul>
-		<li> Create a Google account in case you have no account yet. </li>
-		<li>
-			Go to
-			<a href="https://console.developers.google.com/">
-				https://console.developers.google.com/
-			</a>
-			and create a new project.
-		</li>
-		<li> Click on 'Activate API' and add the <em>YouTube Data API v3</em>. </li>
-		<li> Navigate to 'Credentials' and choose 'Create credentials' -> 'API key'. </li>
-	</ul>
-	This application stores your API key only on your computer after you typed it in.
-	You should not expose your API key to the public.<br>
-	After you added an API key via the 'settings' button in this application, you are ready to go.
-	Simply search for the channel you want to add in the 'Add channel' section. Then add this
-	channel to your channel list. When you click on the 'Add channel' button, you have to choose
-	a starting point for that channel. This means you have to choose from which video on you would
-	like to download the videos of this channel. If you want all videos, simply continue without
-	selecting a starting point. Now that you have a non-empty channel list, you can download the
-	new videos for each channel (or even for all channels at once) by clicking on the corresponding
-	button.<br>
-	Of course, you can also download single videos. Just copy the full video URL into the proper
-	search field and click on 'Download'.`;
-	createDialog('show-dialog', 'Help', text, undefined, true);
+	let helpText = require('../html/help.html.js');
+	createDialog('show-dialog', 'Help', helpText['helpDialog'], undefined, true);
 }
 
 /**
  * Displays the settings dialog.
  */
 function displaySettings() {
-	let text = `
-		<h5>YouTube API key</h5>
+	let text =
+		`<h5 class="text-success">YouTube API key</h5>
 		<input class="form-control mr-sm-2" id="api-select" type="text" value="${config.apiKey}">
 		<br>
-		<h5>Output directory</h5>
-		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">
-	`;
+		<h5 class="text-success">Output directory</h5>
+		<input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">`;
+	
 	createDialog('show-dialog', 'Settings', text, () => {
 		updateConfig('apiKey', $('#api-select').val());
 
@@ -324,28 +239,27 @@ function displaySettings() {
 		else
 			displayErrorMessage('You need a YouTube API key in order to use this application!');
 
-		let path = $('#out-select').val();
-		fs.access(path, err => {
+		let inPath = $('#out-select').val();
+		fs.access(inPath, err => {
 			if (err)
-				createDialog('show-dialog', 'Error', 'This directory does not exist!', undefined, true);
+				createDialog('show-dialog', 'Error', 'Directory does not exist!', undefined, true);
 			else
-				updateConfig('outputPath', path.endsWith('/') ? path : path + '/');
+				updateConfig('outputPath', inPath.endsWith(path.sep) ? inPath : inPath + path.sep);
 		});
 	}, true);
 }
 
 /**
- * Displays an error message in the navbar.
+ * Saves the currently selected start time.
  * 
- * @param {string} msg The error message.
+ * @param {object} elem The element which holds the currently selected start time.
+ * @param {string} time Start time for this element.
  */
-function displayErrorMessage(msg) {
-	$('#error-msg').html(`<a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}</a>`);
-}
+function setStartTime(elem, time) {
+	$('.start-time').prop('disabled', false);
+	$('.start-time').removeClass('start-time');
 
-/**
- * Removes the error message from the navbar.
- */
-function removeErrorMessage() {
-	$('#error-msg').html('');
+	$(elem).addClass('start-time');
+	$(elem).prop('start-time', time);
+	$(elem).prop('disabled', true);
 }
