@@ -117,7 +117,9 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 		});
 	} else {
 		title = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-		let video = ytdl(url);
+		let video = ytdl(url, {
+			filter: 'audioonly'
+		});
 		video.pipe(fs.createWriteStream(`${config.outputPath}${config.autoNumber} - ${title}.mp3`));
 
 		let $divId = multi ? 'dl-progress' : 'dl-progress-single';
