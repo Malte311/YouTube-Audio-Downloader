@@ -1,6 +1,6 @@
 # YouTube-Audio-Downloader
 
-This application allows you to download audio tracks (in `.mp3` format) from YouTube videos. Moreover, you can
+This application allows you to download audio tracks (in `.m4a` format) from YouTube videos. Moreover, you can
 add channels which are interesting to you and download all new videos. The application automatically
 keeps track of new videos for you.
 
