@@ -76,6 +76,7 @@ function downloadVideosFromChannel(channelId, startTime = undefined, queue = [],
 			}
 				
 			let curr = 0;
+			queue = queue.reverse(); // API call sorts descending by date but we want ascending
 			asyncArrLoop(queue, (vid, callback) => {
 				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
 			}, 0, () => {
