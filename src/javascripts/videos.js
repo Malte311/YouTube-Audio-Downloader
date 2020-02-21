@@ -141,6 +141,9 @@ function downloadVideo(url, totalDls, current, title = undefined, chTitle = unde
 
 			fs.appendFileSync(config.outputPath + 'error.txt', `${url}\r\n`, 'utf8');
 
+			if (config.devMode)
+				console.log(`Error for ${url}:\r\n ${err}\n`);
+
 			typeof callback === 'function' && callback();
 		});
 	}

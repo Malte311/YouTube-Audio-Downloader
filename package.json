@@ -30,6 +30,6 @@
     "electron-is-running-in-asar": "^1.0.0",
     "electron-json-storage": "^4.1.8",
     "request": "^2.88.0",
-    "ytdl-core": "^0.29.7"
+    "ytdl-core": "^1.0.9"
   }
 }
