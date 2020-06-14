@@ -125,11 +125,13 @@ function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) 
  * @param {string} cardText The text of the card.
  */
 function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	let cardTitleEscaped = cardTitle.replace('\'', '\\\'').replace('\"', '\\\"');
+
 	cardText += 
 		`<br>
 		<div style="justify-content: flex-end; display: flex;">
 			<button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
-					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitle}')">
+					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitleEscaped}')">
 				Add channel
 			</button>
 		</div>`;

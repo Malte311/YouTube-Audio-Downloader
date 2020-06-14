@@ -1,6 +1,6 @@
 {
   "name": "YouTube-Audio-Downloader",
-  "version": "0.9.7",
+  "version": "1.0.0",
   "description": "Download audio tracks from YouTube videos.",
   "main": "./src/javascripts/main.js",
   "scripts": {
@@ -22,8 +22,8 @@
     "electron": "^1.8.8",
     "electron-installer-dmg": "^0.2.1",
     "electron-packager": "^12.2.0",
-    "jsdoc": "^3.6.3",
-    "npm": "^6.14.2"
+    "jsdoc": "^3.6.4",
+    "npm": "^6.14.5"
   },
   "dependencies": {
     "compare-versions": "^3.6.0",
