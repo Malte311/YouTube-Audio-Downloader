@@ -1,7 +1,4 @@
-# Install wine to run package-win
-npm install wine-darwin
-# Setup ~/.wine by running a command
-./node_modules/.bin/wine hostnamene
+brew install homebrew/cask-versions/wine-devel # Wine for Windows builds
 
 npm install
 
