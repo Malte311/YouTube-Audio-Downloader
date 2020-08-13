@@ -29,10 +29,14 @@ function createWindow () {
     mainWindow = new electron.BrowserWindow({
         width: electron.screen.getPrimaryDisplay().size.width,
         height: electron.screen.getPrimaryDisplay().size.height,
-        icon: __dirname + '../../res/icon.ico',
+        icon: electron.nativeImage.createFromPath(__dirname + '../../res/icon.ico'),
         movable: true,
         center: true,
-        fullscreen: false
+		fullscreen: false,
+		webPreferences: {
+			enableRemoteModule: true,
+			nodeIntegration: true
+        }
 	});
 	
 	// and load the index.html of the app.

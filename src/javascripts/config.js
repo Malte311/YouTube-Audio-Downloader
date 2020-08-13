@@ -6,15 +6,10 @@
  * @author Malte311
  */
 
-/**
- * Specifies if the application is currently running in asar.
- */
-const isRunningInAsar = require('electron-is-running-in-asar');
-
 module.exports = {
 	apiKey: '',
 	autoNumber: '0000',
 	autoNumLen: 4,
-	devMode: !isRunningInAsar(),
+	devMode: process.argv[2] === '--dev',
 	outputPath: ''
 }
