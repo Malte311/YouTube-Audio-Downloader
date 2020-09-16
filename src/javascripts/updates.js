@@ -16,7 +16,7 @@
 	
 	request(options, (err, response, body) => {
 
-		let pckg = JSON.parse(new Buffer(JSON.parse(body).content, 'base64').toString('ascii'));
+		let pckg = JSON.parse(Buffer.from(JSON.parse(body).content, 'base64').toString('ascii'));
 
 		if (compareVersions(remote.app.getVersion(), pckg.version) < 0) {
 			let msg = 'There is a new version for this application available! Download it now?';
