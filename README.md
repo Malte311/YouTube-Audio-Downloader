@@ -1,7 +1,7 @@
 # YouTube-Audio-Downloader
 
 ![Build Status](https://travis-ci.com/Malte311/YouTube-Audio-Downloader.svg?branch=master)
-[![GitHub license](https://img.shields.io/badge/license-MIT-green)](https://github.com/Malte311/YouTube-Audio-Downloader/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/Malte311/YouTube-Audio-Downloader)](https://github.com/Malte311/YouTube-Audio-Downloader/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/Malte311/YouTube-Audio-Downloader)](https://github.com/Malte311/YouTube-Audio-Downloader/releases)
 
 This application allows you to download audio tracks (in `.m4a` format) from YouTube videos. Moreover, you can
