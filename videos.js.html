@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: videos.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: videos.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+/**
+ * Handles all operations on videos.
+ *
+ * @module videos
+ * @author Malte311
+ */
+
+/**
+ * Downloads all new videos.
+ */
+function downloadAllVideos() {
+	disableDownloadButtons();
+
+	asyncArrLoop(myChannels, (channel, inCallback) => {
+		let startTime = channel.startTime != undefined ? parseInt(channel.startTime) : undefined;
+		downloadVideosFromChannel(channel.channelId, startTime, [], '', inCallback, true);
+	}, 0, () => {
+		enableDownloadButtons();
+		
+		if (!myChannels.length)
+			displayAlert('dl-progress', 'You have no channels added yet!', 'danger');
+		else
+			displayAlert('dl-progress', 'All downloads have been completed!', 'success');
+	});
+}
+
+/**
+ * Downloads all new videos for a specific channel.
+ * 
+ * @param {string} channelId The id of the channel for which we want to download the videos.
+ * @param {number} [startTime] The start time for new videos. Can also be undefined, which means
+ * that all videos are new.
+ * @param {object[]} [queue] Queue containing all videos to download.
+ * @param {string} [nextPage] The token for the next page of the search results.
+ * @param {function} [callback] Callback function
+ * @param {bool} [multi] Specifies if we download videos for multiple channels or not.
+ */
+function downloadVideosFromChannel(channelId, startTime = undefined, queue = [], nextPage = '', callback, multi = false) {
+	disableDownloadButtons();
+
+	let chTitle = myChannels.find(c => c.channelId == channelId).channelTitle;
+	displayAlert('dl-progress', `Currently checking channel "${chTitle}"...`, 'info');
+
+	getVideos(channelId, startTime, response => {
+		response = JSON.parse(response);
+
+		let first = true, finished = false;
+		let oldStartTime = myChannels.find(c => c.channelId == channelId).startTime;
+		let newStartTime = oldStartTime;
+		for (const item of response.items) {
+			let publishTime = new Date(item.snippet.publishedAt).getTime();
+			if (first) { // Videos are sorted by release date: First video is the newest
+				newStartTime = publishTime;
+				first = false;
+			}
+
+			if (publishTime &lt; oldStartTime) {
+				finished = true;
+				break;
+			}
+
+			queue.push({
+				videoLink: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+				videoTitle: item.snippet.title
+			});
+		}
+
+		if (response.nextPageToken &amp;&amp; !finished) {
+			downloadVideosFromChannel(channelId, startTime, queue, response.nextPageToken, callback, multi);
+		} else {
+			let totalDls = queue.length;
+			if (!totalDls &amp;&amp; !multi) { // No downloads at all
+				displayAlert('dl-progress', 'No new videos available!', 'danger');
+				enableDownloadButtons();
+			}
+				
+			let curr = 0;
+			queue = queue.reverse(); // API call sorts descending by date but we want ascending
+			asyncArrLoop(queue, (vid, callback) => {
+				downloadVideo(vid.videoLink, totalDls, ++curr, vid.videoTitle, chTitle, callback);
+			}, 0, () => {
+				setChannelProperty(channelId, 'startTime', newStartTime + 1);
+
+				if (!multi)
+					enableDownloadButtons();
+
+				displayAlert('dl-progress', `Downloads for channel "${chTitle}" completed!`, 'success');
+
+				typeof callback === 'function' &amp;&amp; callback();
+			});
+		}
+	}, nextPage);
+}
+
+/**
+ * Downloads a video by its url.
+ * 
+ * @param {string} url The url of the video we want to download.
+ * @param {number} totalDls The number of videos which are going to be downloaded.
+ * @param {number} current The number of the current download.
+ * @param {string} [title] The title for the video.
+ * @param {string} [chTitle] The title of the channel from which we are currently downloading.
+ * @param {function} [callback] Callback which is called when the download is completed.
+ * @param {bool} [multi] Specifies if there are multiple downloads.
+ */
+function downloadVideo(url, totalDls, current, title = undefined, chTitle = undefined, callback, multi = true) {
+	if (!isValidUrl(url)) { // Can only happen with user input (single downloads)
+		createDialog('show-dialog', 'Invalid URL', `${url} is not a valid YouTube URL!`, undefined, true);
+		typeof callback === 'function' &amp;&amp; callback();
+		return;
+	}
+
+	if (title == undefined) {
+		getVideoTitle(url, response => {
+			let newTitle = response != undefined ? response : 'Untitled'; // Avoid endless loops
+			downloadVideo(url, totalDls, current, newTitle, chTitle, callback, multi);
+		});
+	} else {
+		title = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+		let video = ytdl(url);
+		video.pipe(fs.createWriteStream(`${config.outputPath}${config.autoNumber} - ${title}.m4a`));
+
+		let $divId = multi ? 'dl-progress' : 'dl-progress-single';
+		video.on('progress', (chunkLen, done, total) => {
+			let progress = Math.round((done / total) * 100);
+			displayDownloadProgress($divId, current, totalDls, progress, chTitle);
+		});
+
+		video.on('end', () => {
+			if (!multi)
+				displayAlert($divId, 'Download completed!', 'success');
+			
+			incAutoNumber(callback);
+		});
+
+		video.on('error', err => {
+			let msg = `Could not download &lt;a href="${url}">${url}&lt;/a>. 
+					Wrote log to &lt;code>${config.outputPath}error.txt&lt;/code>.`;
+			displayAlert($divId, msg, 'danger');
+
+			fs.appendFileSync(config.outputPath + 'error.txt', `${url}\r\n`, 'utf8');
+
+			if (config.devMode)
+				console.log(`Error for ${url}:\r\n ${err}\n`);
+
+			typeof callback === 'function' &amp;&amp; callback();
+		});
+	}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-channel.html">channel</a></li><li><a href="module-config.html">config</a></li><li><a href="module-display.html">display</a></li><li><a href="module-electronMenu.html">electronMenu</a></li><li><a href="module-gapi.html">gapi</a></li><li><a href="module-globals.html">globals</a></li><li><a href="module-load.html">load</a></li><li><a href="module-main.html">main</a></li><li><a href="module-updates.html">updates</a></li><li><a href="module-util.html">util</a></li><li><a href="module-videos.html">videos</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jan 16 2021 16:22:57 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

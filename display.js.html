@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: display.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: display.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+/**
+ * Adds, edits and removes html elements.
+ *
+ * @module display
+ * @author Malte311
+ */
+
+/**
+ * Enables all download buttons.
+ */
+function enableDownloadButtons() {
+	$('.dwnld').prop('disabled', false);
+}
+
+/**
+ * Disables all download buttons.
+ */
+function disableDownloadButtons() {
+	$('.dwnld').prop('disabled', true);
+}
+
+/**
+ * Displays an error message in the navbar.
+ * 
+ * @param {string} msg The error message.
+ */
+function displayErrorMessage(msg) {
+	$('#error-msg').html(`&lt;a href="#" onclick="displayHelp()" class="badge badge-danger">${msg}&lt;/a>`);
+}
+
+/**
+ * Removes the error message from the navbar.
+ */
+function removeErrorMessage() {
+	$('#error-msg').html('');
+}
+
+/**
+ * Displays an alert in a given element.
+ * 
+ * @param {string} id The id of the element in which the alert should be displayed.
+ * @param {string} text The text for the alert.
+ */
+function displayAlert(id, text, color = 'primary') {
+	$(`#${id}`).html(`
+		&lt;div class="alert alert-${color}" role="alert"
+				style="width:50%; margin:auto; text-align:center; margin-top:20px;">
+			${text}
+	  	&lt;/div>
+	`);
+}
+
+/**
+ * Displays a card (content container) with the given information.
+ * 
+ * @param {string} parentId The id of the parent element to which the card should be appended.
+ * @param {string} cardId The id of the card.
+ * @param {string} cardImg The image path for the card.
+ * @param {string} [cardTitle] The title for the card.
+ * @param {string} [cardText] The text for the card.
+ */
+function displayCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	$(`#${parentId}`).append(`
+		&lt;div class="card" id="${cardId}" style="width: 14rem; margin-left: 5px; margin-right: 5px;">
+			&lt;img src="${cardImg}" class="card-img-top">
+			&lt;div class="card-body">
+				${cardTitle != undefined ? `&lt;h5 class="card-title">${cardTitle}&lt;/h5>` : ''}
+				${cardText != undefined ? `&lt;p class="card-text">${cardText}&lt;/p>` : ''}
+			&lt;/div>
+		&lt;/div>
+	`);
+}
+
+/**
+ * Adds a card content container for a channel to a given element.
+ * 
+ * @param {string} parentId The id of the element where the card should be inserted.
+ * @param {string} cardId The id of the new card.
+ * @param {string} cardImg The path to the image inside the card.
+ * @param {string} cardTitle The title of the card.
+ */
+function displayChannelCard(parentId, cardId, cardImg, cardTitle) {
+	let cardText =
+		`&lt;button class="btn btn-outline-success dwnld" style="margin-bottom: 10px;"
+				onclick="downloadVideosFromChannel('${cardId}')">
+			Download new videos
+		&lt;/button>
+		&lt;button class="btn btn-outline-danger" onclick="removeChannel('${cardId}')">
+			Remove
+		&lt;/button>`;
+	
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
+}
+
+/**
+ * Displays a preview card (when adding a new channel for choosing the starting point).
+ * 
+ * @param {string} parentId The id of the parent element in which the card should be placed.
+ * @param {string} cardImg The path to the image inside the card.
+ * @param {string} cardTitle The title of the card.
+ * @param {string} channelId The id of the channel for which a preview is displayed.
+ * @param {string} startTime The start time for this specific card.
+ */
+function displayPreviewCard(parentId, cardImg, cardTitle, channelId, startTime) {
+	let cardText = cardTitle +
+		`&lt;br>
+		&lt;div style="justify-content: flex-end; display: flex;">
+			&lt;button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="setStartTime(this, '${startTime}')">
+				Set as start
+			&lt;/button>
+		&lt;/div>`;
+	
+	displayCard(parentId, channelId, cardImg, '', cardText);
+}
+
+/**
+ * Displays the search results whenever a search is done.
+ * 
+ * @param {string} parentId The id of the element where the card should be inserted.
+ * @param {string} cardId The id of the new card (which is also the channel id).
+ * @param {string} cardImg The path to the image inside the card.
+ * @param {string} cardTitle The title of the card.
+ * @param {string} cardText The text of the card.
+ */
+function displaySearchResultCard(parentId, cardId, cardImg, cardTitle, cardText) {
+	let cardTitleEscaped = cardTitle.replace('\'', '\\\'').replace('\"', '\\\"');
+
+	cardText += 
+		`&lt;br>
+		&lt;div style="justify-content: flex-end; display: flex;">
+			&lt;button class="btn btn-outline-success" style="position: absolute; bottom: 15px;"
+					onclick="addChannel('${cardId}', '${cardImg}', '${cardTitleEscaped}')">
+				Add channel
+			&lt;/button>
+		&lt;/div>`;
+
+	displayCard(parentId, cardId, cardImg, cardTitle, cardText);
+}
+
+/**
+ * Displays the download progress.
+ * 
+ * @param {string} divId The id of the div in which the progress should be displayed.
+ * @param {number} currentNum Number of the video which is currently being downloaded.
+ * @param {number} totalNum Total number of videos to be downloaded.
+ * @param {number} progress Progress of the current download (in percent).
+ * @param {string} [channelName] The name of the channel from which we are downloading currently.
+ */
+function displayDownloadProgress(divId, currentNum, totalNum, progress, channelName) {
+	let downloadMessage = channelName != undefined ?
+		`Downloading video ${currentNum} of ${totalNum} from channel "${channelName}"...` :
+		`Downloading video ${currentNum} of ${totalNum}...`;
+	
+	$(`#${divId}`).html(`
+		&lt;div style="width: 100%;">
+			${downloadMessage}
+		&lt;/div>
+		&lt;div class="progress" style="width: 40%; display: block;">
+			&lt;div class="progress-bar progress-bar-striped bg-success" style="width: ${progress}%;">
+				${progress}%
+			&lt;/div>
+		&lt;/div>
+	`);
+}
+
+/**
+ * Creates a preview for a given channel such that the user can choose a starting point.
+ * 
+ * @param {string} divId The id of the parent element in which the preview should be displayed.
+ * @param {string} channelId The id of the channel for which we want to create a preview.
+ * @param {string} [pageToken] The page token for the API request.
+ */
+function createChannelPreview(divId, channelId, pageToken = '') {
+	getVideos(channelId, undefined, response => {
+		response = JSON.parse(response);
+
+		$(`#card-prev`).remove(); // Reset previous results
+		$(`#${divId}`).append(
+			'&lt;div id="card-prev" class="row justify-content-center align-self-center">'
+		);
+		for (const video of response.items) {
+			displayPreviewCard(
+				'card-prev',
+				video.snippet.thumbnails.medium.url,
+				video.snippet.title,
+				channelId,
+				video.snippet.publishedAt
+			);
+		}
+
+		// For navigating between pages
+		$('#card-prev').append('&lt;br>');
+		if (response.prevPageToken) {
+			$('#card-prev').append(`
+				&lt;button class="btn btn-outline-success" style="margin-right: 5px; margin-top: 15px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.prevPageToken}')">
+					Previous page
+				&lt;/button>
+			`);
+		}
+
+		if (response.nextPageToken) {
+			$('#card-prev').append(`
+				&lt;button class="btn btn-outline-success"style="margin-top: 15px;"
+						onclick="createChannelPreview('${divId}', '${channelId}', '${response.nextPageToken}')">
+					Next page
+				&lt;/button>
+			`);
+		}
+
+		$(`#${divId}`).append('&lt;/div>');
+	}, pageToken, 10); // Grab the 10 most recent videos
+}
+
+/**
+ * Displays the help dialog.
+ */
+function displayHelp() {
+	let helpText = require('../html/help.html.js');
+	createDialog('show-dialog', 'Help', helpText['helpDialog'], undefined, true);
+}
+
+/**
+ * Displays the settings dialog.
+ */
+function displaySettings() {
+	let text =
+		`&lt;h5 class="text-success">YouTube API key&lt;/h5>
+		&lt;input class="form-control mr-sm-2" id="api-select" type="text" value="${config.apiKey}">
+		&lt;br>
+		&lt;h5 class="text-success">Output directory&lt;/h5>
+		&lt;input class="form-control mr-sm-2" id="out-select" type="text" value="${config.outputPath}">`;
+	
+	createDialog('show-dialog', 'Settings', text, () => {
+		updateConfig('apiKey', $('#api-select').val());
+
+		if (config.apiKey.length)
+			removeErrorMessage();
+		else
+			displayErrorMessage('You need a YouTube API key in order to use this application!');
+
+		let inPath = $('#out-select').val();
+		fs.access(inPath, err => {
+			if (err)
+				createDialog('show-dialog', 'Error', 'Directory does not exist!', undefined, true);
+			else
+				updateConfig('outputPath', inPath.endsWith(path.sep) ? inPath : inPath + path.sep);
+		});
+	}, true);
+}
+
+/**
+ * Saves the currently selected start time.
+ * 
+ * @param {object} elem The element which holds the currently selected start time.
+ * @param {string} time Start time for this element.
+ */
+function setStartTime(elem, time) {
+	$('.start-time').prop('disabled', false);
+	$('.start-time').removeClass('start-time');
+
+	$(elem).addClass('start-time');
+	$(elem).prop('start-time', time);
+	$(elem).prop('disabled', true);
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-channel.html">channel</a></li><li><a href="module-config.html">config</a></li><li><a href="module-display.html">display</a></li><li><a href="module-electronMenu.html">electronMenu</a></li><li><a href="module-gapi.html">gapi</a></li><li><a href="module-globals.html">globals</a></li><li><a href="module-load.html">load</a></li><li><a href="module-main.html">main</a></li><li><a href="module-updates.html">updates</a></li><li><a href="module-util.html">util</a></li><li><a href="module-videos.html">videos</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jan 16 2021 16:22:57 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
