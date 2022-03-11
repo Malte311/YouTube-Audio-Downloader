@@ -8,6 +8,8 @@ This application allows you to download audio tracks (in `.m4a` format) from You
 add channels which are interesting to you and download all new videos. The application automatically
 keeps track of new videos for you.
 
+> :warning: Be aware that this repository is not actively maintained anymore.
+
 ***
 ## Installation
 You can get the latest version of this application [here](https://github.com/Malte311/YouTube-Audio-Downloader/releases).
